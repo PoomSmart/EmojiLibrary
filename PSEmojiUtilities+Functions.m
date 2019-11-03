@@ -318,7 +318,7 @@
     else
         emoji = [[[NSClassFromString(@"UIKeyboardEmoji") alloc] initWithString:emojiString] autorelease];
     if ([emoji respondsToSelector:@selector(setSupportsSkin:)])
-        emoji.supportsSkin = [self hasVariantsForEmoji:emojiString] & PSEmojiTypeSkin;
+        emoji.supportsSkin = [self hasSkinToneVariants:emojiString];
     return emoji;
 }
 
