@@ -1,0 +1,5 @@
+#import "EMFEmojiCategory.h"
+#import "EMFEmojiLocaleData.h"
+#import "EMFEmojiPreferences.h"
+#import "EMFEmojiToken.h"
+#import "EMFStringUtilities.h"

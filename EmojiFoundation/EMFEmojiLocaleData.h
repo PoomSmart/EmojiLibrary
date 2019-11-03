@@ -1,0 +1,2 @@
+@interface EMFEmojiLocaleData : NSObject
+@end
