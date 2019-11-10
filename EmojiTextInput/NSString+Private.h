@@ -1,4 +1,4 @@
-#import <unicode/utf16.h>
+#import "../Types.h"
 
 @interface NSString (Private)
 + (NSString *)stringWithUnichar:(UChar32)aChar;

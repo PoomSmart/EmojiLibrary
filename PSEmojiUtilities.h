@@ -63,7 +63,9 @@
 
 + (BOOL)sectionHasSkin:(NSInteger)section;
 
+#if !TARGET_OS_OSX
 + (UIKeyboardEmojiCollectionViewCell *)collectionView:(UICollectionView *)collectionView_ cellForItemAtIndexPath:(NSIndexPath *)indexPath inputView:(UIKeyboardEmojiCollectionInputView *)inputView;
+#endif
 + (UIKeyboardEmojiCategory *)prepopulatedCategory;
 
 #endif

@@ -16,16 +16,16 @@
 }
 
 + (UChar32)firstLongCharacter:(NSString *)string {
-#if __LP64__
+#if __LP64__ && !TARGET_OS_OSX
     return [string _firstLongCharacter];
 #else
     UChar32 cbase = 0;
     if (string.length) {
         cbase = [string characterAtIndex:0];
-        if ((cbase & 0xfc00) == 0xd800 && string.length >= 2) {
+        if ((cbase & 0xFC00) == 0xD800 && string.length >= 2) {
             UChar32 y = [string characterAtIndex:1];
-            if ((y & 0xfc00) == 0xdc00)
-                cbase = (cbase << 10) + y - 0x35fdc00;
+            if ((y & 0xFC00) == 0xDC00)
+                cbase = (cbase << 10) + y - 0x35FDC00;
         }
     }
     return cbase;
@@ -241,8 +241,8 @@
     if ([self isGenderEmoji:_baseFirst] && [self hasGender:emojiString])
         return [self emojiGenderString:emojiString baseFirst:_baseFirst skin:skin];
     if ([self isProfessionEmoji:_base]) {
-        NSRange baseRange = [emojiString rangeOfString:_baseFirst options:NSLiteralSearch];
-        return baseRange.location != NSNotFound ? [emojiString stringByReplacingCharactersInRange:baseRange withString:[NSString stringWithFormat:@"%@%@", _baseFirst, skin]] : nil;
+        NSRange baseRange = [_base rangeOfString:_baseFirst options:NSLiteralSearch];
+        return baseRange.location != NSNotFound ? [_base stringByReplacingCharactersInRange:baseRange withString:[NSString stringWithFormat:@"%@%@", _baseFirst, skin]] : nil;
     }
     if ([self isDingbatVariantsEmoji:baseFirst])
         return [NSString stringWithFormat:@"%@%@%@", baseFirst, skin, FE0F];
@@ -382,6 +382,8 @@
     return category;
 }
 
+#if !TARGET_OS_OSX
+
 + (UIKeyboardEmojiCollectionViewCell *)collectionView:(UICollectionView *)collectionView_ cellForItemAtIndexPath:(NSIndexPath *)indexPath inputView:(UIKeyboardEmojiCollectionInputView *)inputView {
     UIKeyboardEmojiCollectionView *collectionView = (UIKeyboardEmojiCollectionView *)[inputView valueForKey:@"_collectionView"];
     UIKeyboardEmojiCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"kEmojiCellIdentifier" forIndexPath:indexPath];
@@ -424,6 +426,8 @@
     cell.emojiFontSize = [collectionView emojiGraphicsTraits].emojiKeyWidth;
     return cell;
 }
+
+#endif
 
 #endif
 

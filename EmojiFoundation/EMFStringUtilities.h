@@ -1,4 +1,4 @@
-#import <unicode/utf16.h>
+#import "../Types.h"
 
 @interface EMFStringUtilities : NSObject
 + (NSString *)_stringWithUnichar:(UChar32)unichar;
