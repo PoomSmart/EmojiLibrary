@@ -7,18 +7,20 @@ void printArray(NSString *title, NSArray *array) {
 }
 
 NSString *toUTF32(NSString *string) {
-	NSMutableString *utf32 = [NSMutableString string];
+	if (string.length == 1)
+		return [NSString stringWithFormat:@"%x", [PSEmojiUtilities firstLongCharacter:string]];
+	NSMutableArray *utf32 = [NSMutableArray array];
 	for (int i = 0; i < string.length - 1; i += 2) {
-		UChar32 cbase = [string characterAtIndex:i];
+		UChar cbase = [string characterAtIndex:i];
         if ((cbase & 0xFC00) == 0xD800 && i + 1 < string.length) {
-            UChar32 y = [string characterAtIndex:i + 1];
+            UChar y = [string characterAtIndex:i + 1];
             if ((y & 0xFC00) == 0xDC00)
                 cbase = (cbase << 10) + y - 0x35FDC00;
         } else
 			--i;
-		[utf32 appendFormat:@"%x ", cbase];
+		[utf32 addObject:[NSString stringWithFormat:@"%x", cbase]];
 	}
-	return utf32;
+	return [utf32 componentsJoinedByString:@" "];
 }
 
 void printWithCodepoints(NSString *title, NSString *emoji) {
@@ -27,12 +29,49 @@ void printWithCodepoints(NSString *title, NSString *emoji) {
 
 int main(int argc, char *argv[], char *envp[]) {
 	if (argc != 2) {
-		printf("Usage: EmojiTester <emoji>\n");
+		printf("Usage: EmojiTester [c|u]\n");
 		return EXIT_FAILURE;
 	}
-	NSString *emoji = [NSString stringWithUTF8String:argv[1]];
-	printWithCodepoints(@"Input", emoji);
-	printWithCodepoints(@"Base", [PSEmojiUtilities emojiBaseString:emoji]);
-	printArray(@"Variants", [PSEmojiUtilities skinToneVariants:emoji]);
+	const char *opt = argv[1];
+	bool out = strcmp(opt, "u") == 0;
+	if (!out && strcmp(opt, "c")) {
+		printf("Don't\n");
+		return EXIT_FAILURE;
+	}
+	FILE *fp;
+	char buffer[2048];
+	if ((fp = fopen("snapshot.txt", out ? "w+" : "r")) == NULL) {
+        printf("Unable to open file: snapshot.txt\n");
+        return EXIT_FAILURE;
+    }
+	for (NSString *emoji in [PSEmojiUtilities PeopleEmoji]) {
+		NSMutableString *line = [NSMutableString string];
+		NSMutableString *skinCodes = [NSMutableString string];
+		[line appendString:emoji];
+		if ([PSEmojiUtilities hasVariantsForEmoji:emoji] & PSEmojiTypeSkin) {
+			for (NSString *variant in [PSEmojiUtilities skinToneVariants:emoji]) {
+				[line appendFormat:@" %@", variant];
+				[skinCodes appendFormat:@" %@ /", toUTF32(variant)];
+			}
+			[line appendFormat:@" %@ |%@", toUTF32(emoji), skinCodes];
+		} else
+			[line appendFormat:@" %@", toUTF32(emoji)];
+		NSLog(@"%@", line);
+		const char *cline = [line UTF8String];
+		if (out) {
+			fputs(cline, fp);
+			fputs("\n", fp);
+		} else {
+			fgets(buffer, 2048, fp);
+			size_t len = strlen(buffer);
+			if (buffer[len - 1] == '\n')
+				buffer[len - 1] = '\0';
+			if (strcmp(cline, buffer)) {
+				printf("Snapshot mismatched!\n");
+				return EXIT_FAILURE;
+			}
+		}
+	}
+	fclose(fp);
 	return 0;
 }

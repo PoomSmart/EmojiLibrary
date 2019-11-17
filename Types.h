@@ -1,1 +1,1 @@
-typedef int32_t UChar32;
+typedef unsigned int UChar;

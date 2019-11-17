@@ -2,10 +2,10 @@
 
 @implementation NSString (MacExtras)
 
-+ (NSString *)stringWithUnichar:(UChar32)value {
-    unichar buffer[2];
++ (NSString *)stringWithUnichar:(UChar)value {
+    unsigned short buffer[2];
     NSUInteger length = 0;
-    if (value - 0x10000 >= 0x100000) {
+    if (value - 0x10000 > 0xFFFFF) {
         buffer[0] = value;
         length = 1;
     } else {

@@ -15,15 +15,15 @@
     return @[ @"☝", @"✊", @"✋", @"✌", @"✍" ];
 }
 
-+ (UChar32)firstLongCharacter:(NSString *)string {
++ (UChar)firstLongCharacter:(NSString *)string {
 #if __LP64__ && !TARGET_OS_OSX
     return [string _firstLongCharacter];
 #else
-    UChar32 cbase = 0;
+    UChar cbase = 0;
     if (string.length) {
         cbase = [string characterAtIndex:0];
         if ((cbase & 0xFC00) == 0xD800 && string.length >= 2) {
-            UChar32 y = [string characterAtIndex:1];
+            UChar y = [string characterAtIndex:1];
             if ((y & 0xFC00) == 0xDC00)
                 cbase = (cbase << 10) + y - 0x35FDC00;
         }
@@ -286,7 +286,7 @@
     if (![self isNoneVariantEmoji:emojiString]) {
         if ([self isDingbatVariantsEmoji:emojiString])
             variant |= PSEmojiTypeDingbat;
-        if ([self isSkinToneEmoji:emojiString])
+        if ([self hasSkinToneVariants:emojiString])
             variant |= PSEmojiTypeSkin;
         if ([self isGenderEmoji:emojiString]) {
             if (containsString(emojiString, ZWJ2640) || containsString(emojiString, ZWJ2642))

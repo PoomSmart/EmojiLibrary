@@ -37,6 +37,7 @@
 + (NSArray <NSString *> *)ProfessionWithoutSkinToneEmoji;
 + (NSArray <NSString *> *)CoupleMultiSkinToneEmoji;
 + (NSArray <NSString *> *)MultiPersonFamilySkinToneEmoji;
+
 @end
 
 @interface PSEmojiUtilities (Functions)
@@ -45,7 +46,7 @@
 + (NSArray <NSString *> *)genderEmojiBaseStringsNeedVariantSelector;
 + (NSArray <NSString *> *)dingbatEmojiBaseStringsNeedVariantSelector;
 
-+ (UChar32)firstLongCharacter:(NSString *)string;
++ (UChar)firstLongCharacter:(NSString *)string;
 
 + (NSString *)getGender:(NSString *)emojiString;
 + (NSString *)getSkin:(NSString *)emojiString;
