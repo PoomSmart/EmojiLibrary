@@ -46,7 +46,7 @@
 + (NSArray <NSString *> *)genderEmojiBaseStringsNeedVariantSelector;
 + (NSArray <NSString *> *)dingbatEmojiBaseStringsNeedVariantSelector;
 
-+ (UChar)firstLongCharacter:(NSString *)string;
++ (UChar32)firstLongCharacter:(NSString *)string;
 
 + (NSString *)getGender:(NSString *)emojiString;
 + (NSString *)getSkin:(NSString *)emojiString;

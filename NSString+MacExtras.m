@@ -2,7 +2,7 @@
 
 @implementation NSString (MacExtras)
 
-+ (NSString *)stringWithUnichar:(UChar)value {
++ (NSString *)stringWithUnichar:(unsigned int)value {
     unsigned short buffer[2];
     NSUInteger length = 0;
     if (value - 0x10000 > 0xFFFFF) {

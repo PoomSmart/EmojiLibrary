@@ -15,15 +15,15 @@
     return @[ @"☝", @"✊", @"✋", @"✌", @"✍" ];
 }
 
-+ (UChar)firstLongCharacter:(NSString *)string {
++ (UChar32)firstLongCharacter:(NSString *)string {
 #if __LP64__ && !TARGET_OS_OSX
     return [string _firstLongCharacter];
 #else
-    UChar cbase = 0;
+    UChar32 cbase = 0;
     if (string.length) {
         cbase = [string characterAtIndex:0];
         if ((cbase & 0xFC00) == 0xD800 && string.length >= 2) {
-            UChar y = [string characterAtIndex:1];
+            UChar32 y = [string characterAtIndex:1];
             if ((y & 0xFC00) == 0xDC00)
                 cbase = (cbase << 10) + y - 0x35FDC00;
         }

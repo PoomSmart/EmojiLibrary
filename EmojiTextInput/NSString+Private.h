@@ -1,6 +1,6 @@
 #import "../Types.h"
 
 @interface NSString (Private)
-+ (NSString *)stringWithUnichar:(UChar)aChar;
-+ (NSString *)_stringWithUnichar:(UChar)aChar;
++ (NSString *)stringWithUnichar:(unsigned int)aChar;
++ (NSString *)_stringWithUnichar:(unsigned int)aChar;
 @end
