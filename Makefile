@@ -1,4 +1,4 @@
-PACKAGE_VERSION = 1.1.3
+PACKAGE_VERSION = 1.1.4~b1
 
 ifeq ($(SIMULATOR),1)
 	TARGET = simulator:clang:latest:8.0
@@ -16,7 +16,7 @@ libEmojiLibrary_FILES = PSEmojiUtilities.m PSEmojiUtilities+Emoji.m PSEmojiUtili
 include $(THEOS_MAKE_PATH)/library.mk
 # make setup SIMULATOR=1 PL_SIMULATOR_VERSION=<target-iOS-version>
 ifeq ($(SIMULATOR),1)
-include ../preferenceloader/locatesim.mk
+include ../preferenceloader-sim/locatesim.mk
 setup:: clean all
 	@sudo rm -f $(PL_SIMULATOR_ROOT)/usr/lib/$(LIBRARY_NAME).dylib
 	@sudo cp -v $(THEOS_OBJ_DIR)/$(LIBRARY_NAME).dylib $(PL_SIMULATOR_ROOT)/usr/lib/

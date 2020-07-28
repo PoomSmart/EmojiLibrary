@@ -90,15 +90,15 @@
     return @[];
 }
 
-+ (NSInteger)multiPersonTypeForString:(NSString *)emojiString {
++ (PSEmojiMultiPersonType)multiPersonTypeForString:(NSString *)emojiString {
     NSString *baseFirst = [self emojiBaseFirstCharacterString:emojiString];
     if ([self isCoupleMultiSkinToneEmoji:baseFirst]) {
         if ([baseFirst isEqualToString:@"👫"])
-            return 1; // FM
+            return PSEmojiMultiPersonTypeFM;
         if ([baseFirst isEqualToString:@"👭"])
-            return 2; // FF
+            return PSEmojiMultiPersonTypeFF;
         if ([baseFirst isEqualToString:@"👬"])
-            return 3; // MM
+            return PSEmojiMultiPersonTypeMM;
     }
     if ([self isComposedCoupleMultiSkinToneEmoji:emojiString]) {
         NSArray *tokens = [self tokenizedMultiPersonFromString:emojiString];
@@ -108,16 +108,46 @@
         NSString *baseRight = [self emojiBaseFirstCharacterString:tokens[1]];
         if ([baseLeft isEqualToString:@"👩"]) {
             if ([baseRight isEqualToString:@"👩"])
-                return 2;
+                return PSEmojiMultiPersonTypeFF;
             if ([baseRight isEqualToString:@"👨"])
-                return 1;
+                return PSEmojiMultiPersonTypeFM;
         }
         if ([baseLeft isEqualToString:@"👨"] && [baseRight isEqualToString:@"👨"])
-            return 3;
+            return PSEmojiMultiPersonTypeMM;
         if ([baseLeft isEqualToString:@"🧑"] && [baseRight isEqualToString:@"🧑"])
-            return 4;
+            return PSEmojiMultiPersonTypeNN;
     }
     return 0;
+}
+
++ (NSString *)skinToneSuffixFromSpecifierType:(NSString *)specifier {
+    NSString *realSpecifier = [specifier stringByReplacingOccurrencesOfString:@"EMFSkinToneSpecifierTypeFitzpatrick" withString:@""];
+    if ([realSpecifier isEqualToString:@"None"])
+        return @"";
+    if ([realSpecifier isEqualToString:@"1_2"])
+        return @"🏻";
+    if ([realSpecifier isEqualToString:@"3"])
+        return @"🏼";
+    if ([realSpecifier isEqualToString:@"4"])
+        return @"🏽";
+    if ([realSpecifier isEqualToString:@"5"])
+        return @"🏾";
+    if ([realSpecifier isEqualToString:@"6"])
+        return @"🏿";
+    return nil;
+}
+
++ (NSArray <NSArray <NSString *> *> *)skinToneChooserVariantsForNeutralMultiPersonType {
+    return @[
+        @[ @"🧑🏻‍🤝‍🧑", @"🧑🏼‍🤝‍🧑", @"🧑🏽‍🤝‍🧑", @"🧑🏾‍🤝‍🧑", @"🧑🏿‍🤝‍🧑" ],
+        @[ @"🧑‍🤝‍🧑🏻", @"🧑‍🤝‍🧑🏼", @"🧑‍🤝‍🧑🏽", @"🧑‍🤝‍🧑🏾", @"🧑‍🤝‍🧑🏿" ]
+    ];
+}
+
++ (NSString *)multiPersonStringForNeutralStringWithSkinToneVariantSpecifier:(NSArray <NSString *> *)specifier {
+    NSString *leftSkin = [self skinToneSuffixFromSpecifierType:specifier[0]];
+    NSString *rightSkin = [self skinToneSuffixFromSpecifierType:specifier[1]];
+    return [NSString stringWithFormat:@"🧑%@‍🤝‍🧑%@", leftSkin, rightSkin];
 }
 
 + (BOOL)hasSkin:(NSString *)emojiString {

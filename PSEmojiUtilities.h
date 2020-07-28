@@ -45,6 +45,7 @@
 + (NSArray <NSString *> *)skinModifiers;
 + (NSArray <NSString *> *)genderEmojiBaseStringsNeedVariantSelector;
 + (NSArray <NSString *> *)dingbatEmojiBaseStringsNeedVariantSelector;
++ (NSArray <NSArray <NSString *> *> *)skinToneChooserVariantsForNeutralMultiPersonType;
 
 + (UChar32)firstLongCharacter:(NSString *)string;
 
@@ -57,6 +58,7 @@
 + (NSString *)emojiBaseString:(NSString *)emojiString;
 + (NSString *)skinToneVariant:(NSString *)emojiString baseFirst:(NSString *)baseFirst base:(NSString *)base skin:(NSString *)skin;
 + (NSString *)skinToneVariant:(NSString *)emojiString skin:(NSString *)skin;
++ (NSString *)multiPersonStringForNeutralStringWithSkinToneVariantSpecifier:(NSArray <NSString *> *)specifier;
 
 #if !__arm64e__
 
@@ -91,7 +93,7 @@
 + (BOOL)isComposedCoupleMultiSkinToneEmoji:(NSString *)emojiString;
 + (BOOL)isMultiPersonFamilySkinToneEmoji:(NSString *)emojiString;
 
-+ (NSInteger)multiPersonTypeForString:(NSString *)emojiString;
++ (PSEmojiMultiPersonType)multiPersonTypeForString:(NSString *)emojiString;
 + (NSUInteger)hasVariantsForEmoji:(NSString *)emojiString;
 
 + (NSArray <NSString *> *)tokenizedMultiPersonFromString:(NSString *)emojiString;
