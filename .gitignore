@@ -2,3 +2,4 @@ obj
 .theos
 packages/*
 .DS_Store
+Font-*
