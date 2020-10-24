@@ -1,6 +1,7 @@
 // EmojiCategory > -readEmojis:YES withVariant:NO pretty:YES
 // The list of emojis per iOS-oriented category
 #import "PSEmojiUtilities.h"
+#import <version.h>
 
 @implementation PSEmojiUtilities (Emoji)
 

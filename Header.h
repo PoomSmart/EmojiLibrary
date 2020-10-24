@@ -1,5 +1,3 @@
-#import "../PS.h"
-
 #import "EmojiFoundation/EmojiFoundation.h"
 #import "EmojiUIKit/EmojiUIKit.h"
 

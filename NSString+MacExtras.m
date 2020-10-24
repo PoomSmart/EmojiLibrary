@@ -1,4 +1,4 @@
-#import "Types.h"
+#import <Foundation/Foundation.h>
 
 @implementation NSString (MacExtras)
 

@@ -1,5 +1,7 @@
+#import "../PSHeader/Misc.h"
 #import "PSEmojiUtilities.h"
 #import <objc/runtime.h>
+#import <version.h>
 
 @implementation PSEmojiUtilities (Functions)
 
@@ -16,7 +18,7 @@
 }
 
 + (UChar32)firstLongCharacter:(NSString *)string {
-#if __LP64__ && !TARGET_OS_OSX
+#if __LP64__ && !TARGET_OS_OSX && !FALLBACK_FLC
     return [string _firstLongCharacter];
 #else
     UChar32 cbase = 0;
@@ -381,7 +383,7 @@
 #if !__arm64e__
 
 + (BOOL)sectionHasSkin:(NSInteger)section {
-    return section <= PSEmojiCategoryPeople || ((isiOS91Up && (section == PSEmojiCategoryActivity || section == PSEmojiCategoryObjects)) || (!isiOS91Up && (section == IDXPSEmojiCategoryActivity || section == IDXPSEmojiCategoryObjects)));
+    return section <= PSEmojiCategoryPeople || ((IS_IOS_OR_NEWER(iOS_9_1) && (section == PSEmojiCategoryActivity || section == PSEmojiCategoryObjects)) || (!IS_IOS_OR_NEWER(iOS_9_1) && (section == IDXPSEmojiCategoryActivity || section == IDXPSEmojiCategoryObjects)));
 }
 
 + (NSString *)overrideKBTreeEmoji:(NSString *)emojiString {
@@ -390,7 +392,6 @@
         if (skin) {
             NSString *emojiWithoutSkin = [self changeEmojiSkin:emojiString toSkin:@""];
             NSString *result = [self skinToneVariant:emojiWithoutSkin skin:skin];
-            HBLogDebug(@"Removing %@ from the invalid %@ -> %@ to get %@", skin, emojiString, emojiWithoutSkin, result);
             return result;
         }
     }
@@ -437,7 +438,7 @@
             cell.emoji = [prepolulatedEmojis subarrayWithRange:range][indexPath.item];
     } else {
         NSInteger section = indexPath.section;
-        if (isiOS91Up)
+        if (IS_IOS_OR_NEWER(iOS_9_1))
             section = [NSClassFromString(@"UIKeyboardEmojiCategory") categoryTypeForCategoryIndex:section];
         UIKeyboardEmojiCategory *category = [NSClassFromString(@"UIKeyboardEmojiCategory") categoryForType:section];
         NSArray <UIKeyboardEmoji *> *emojis = category.emoji;
@@ -476,7 +477,7 @@
 #endif
 
 + (void)resetEmojiPreferences {
-    if (isiOS11Up) {
+    if (IS_IOS_OR_NEWER(iOS_11_0)) {
         // Better approach: Reset keyboard dictionary
         return;
     }
