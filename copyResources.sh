@@ -10,7 +10,7 @@ if [[ -z $1 ]];then
 	exit 1
 fi
 
-FOLDER=Font-13
+FOLDER=Font-14
 
 if [[ -z $2 ]];then
 	echo "Font must be specified"
