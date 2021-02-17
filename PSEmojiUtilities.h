@@ -37,6 +37,7 @@
 + (NSArray <NSString *> *)ProfessionWithoutSkinToneEmoji;
 + (NSArray <NSString *> *)CoupleMultiSkinToneEmoji;
 + (NSArray <NSString *> *)MultiPersonFamilySkinToneEmoji;
++ (NSArray <NSString *> *)ExtendedCoupleMultiSkinToneEmoji;
 
 @end
 

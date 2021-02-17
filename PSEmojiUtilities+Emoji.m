@@ -429,6 +429,17 @@
     return data;
 }
 
++ (NSArray <NSString *> *)ExtendedCoupleMultiSkinToneEmoji {
+    static dispatch_once_t onceToken;
+    static NSArray <NSString *> *data;
+    dispatch_once(&onceToken, ^{
+        data = [self AsFakeSet:@[
+            @"💏", @"👩‍❤️‍💋‍👩", @"👨‍❤️‍💋‍👨", @"👨‍❤️‍👨", @"👩‍❤️‍💋‍👨", @"👩‍❤️‍👩", @"💑", @"👩‍❤️‍👨"
+        ]];
+    });
+    return data;
+}
+
 + (NSArray <NSString *> *)MultiPersonFamilySkinToneEmoji {
     static dispatch_once_t onceToken;
     static NSArray <NSString *> *data;

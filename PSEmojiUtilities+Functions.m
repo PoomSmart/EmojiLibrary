@@ -1,5 +1,6 @@
 #import "../PSHeader/Misc.h"
 #import "PSEmojiUtilities.h"
+#import <TextInput/NSString+TIExtras.h>
 #import <objc/runtime.h>
 #import <version.h>
 
@@ -79,7 +80,7 @@
 }
 
 + (BOOL)isComposedCoupleMultiSkinToneEmoji:(NSString *)emojiString {
-    return containsString(emojiString, @"‍🤝‍");
+    return containsString(emojiString, @"‍🤝‍") || containsString(emojiString, @"‍❤️");
 }
 
 + (NSArray <NSString *> *)tokenizedMultiPersonFromString:(NSString *)emojiString {
