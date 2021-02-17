@@ -467,9 +467,9 @@
 + (CGGlyph)emojiGlyphShift:(CGGlyph)glyph {
     if (glyph >= 5 && glyph <= 16) // 0 - 9
         return glyph + 73;
-    else if (glyph == 4) // #
+    if (glyph == 4) // #
         return  glyph + 72;
-    else if (glyph == 44) // *
+    if (glyph == 44) // *
         return glyph + 33;
     return glyph;
 }
