@@ -9,6 +9,13 @@
 #define ZWJ2642 @"‍♂"
 #define ZWJ2640FE0F @"‍♀️"
 #define ZWJ2642FE0F @"‍♂️"
+#define HANDSHAKE_JOINER @"🤝"
+#define HANDSHAKE_JOINER_ZWJ @"‍🤝‍"
+#define HEART_JOINER @"‍❤️‍"
+#define HEART_KISS_JOINER @"‍❤️‍💋‍"
+#define WOMAN @"👩"
+#define MAN @"👨"
+#define NEUTRAL @"🧑"
 
 #define CATEGORIES_COUNT 9
 
@@ -46,7 +53,10 @@
 + (NSArray <NSString *> *)skinModifiers;
 + (NSArray <NSString *> *)genderEmojiBaseStringsNeedVariantSelector;
 + (NSArray <NSString *> *)dingbatEmojiBaseStringsNeedVariantSelector;
-+ (NSArray <NSArray <NSString *> *> *)skinToneChooserVariantsForNeutralMultiPersonType;
++ (NSArray <NSArray <NSString *> *> *)coupleSkinToneChooserVariantsForString:(NSString *)emojiString;
++ (NSArray <NSArray <NSString *> *> *)skinToneChooserVariantsForString:(NSString *)emojiString;
++ (NSArray <NSArray <NSString *> *> *)skinToneChooserVariantsForString:(NSString *)emojiString usesSilhouetteSpecifiers:(BOOL)silhouette;
++ (NSArray <NSArray <NSString *> *> *)skinToneChooserArraysForCoupleType:(PSEmojiMultiPersonType)multiPersonType joiner:(NSString *)joiner;
 
 + (UChar32)firstLongCharacter:(NSString *)string;
 
@@ -59,7 +69,8 @@
 + (NSString *)emojiBaseString:(NSString *)emojiString;
 + (NSString *)skinToneVariant:(NSString *)emojiString baseFirst:(NSString *)baseFirst base:(NSString *)base skin:(NSString *)skin;
 + (NSString *)skinToneVariant:(NSString *)emojiString skin:(NSString *)skin;
-+ (NSString *)multiPersonStringForNeutralStringWithSkinToneVariantSpecifier:(NSArray <NSString *> *)specifier;
++ (NSString *)multiPersonStringForString:(NSString *)emojiString skinToneVariantSpecifier:(NSArray <NSString *> *)specifier;
++ (NSString *)joiningStringForCoupleString:(NSString *)emojiString;
 
 #if !__arm64e__
 
@@ -93,16 +104,17 @@
 + (BOOL)isCoupleMultiSkinToneEmoji:(NSString *)emojiString;
 + (BOOL)isComposedCoupleMultiSkinToneEmoji:(NSString *)emojiString;
 + (BOOL)isMultiPersonFamilySkinToneEmoji:(NSString *)emojiString;
++ (BOOL)supportsCoupleSkinToneSelection:(NSString *)emojiString;
 
 + (PSEmojiMultiPersonType)multiPersonTypeForString:(NSString *)emojiString;
 + (NSUInteger)hasVariantsForEmoji:(NSString *)emojiString;
 
 + (NSArray <NSString *> *)tokenizedMultiPersonFromString:(NSString *)emojiString;
++ (NSMutableArray <NSString *> *)skinToneVariantsForCouple:(PSEmojiMultiPersonType)multiPersonType joiner:(NSString *)joiner;
 + (NSMutableArray <NSString *> *)skinToneVariants:(NSString *)emojiString isSkin:(BOOL)isSkin withSelf:(BOOL)withSelf;
 + (NSMutableArray <NSString *> *)skinToneVariants:(NSString *)emojiString isSkin:(BOOL)isSkin;
 + (NSMutableArray <NSString *> *)skinToneVariants:(NSString *)emojiString withSelf:(BOOL)withSelf;
 + (NSMutableArray <NSString *> *)skinToneVariants:(NSString *)emojiString;
-+ (NSMutableArray <NSString *> *)coupleSkinToneVariants:(NSString *)emojiString;
 
 + (UIKeyboardEmoji *)emojiWithString:(NSString *)emojiString;
 + (UIKeyboardEmoji *)emojiWithString:(NSString *)emojiString withVariantMask:(NSInteger)variantMask;

@@ -44,14 +44,38 @@ int main(int argc, char *argv[], char *envp[]) {
         printf("Unable to open file: snapshot.txt\n");
         return EXIT_FAILURE;
     }
+	// NSArray *specifiers = @[
+	// 	@"EMFSkinToneSpecifierTypeFitzpatrickNone",
+	// 	@"EMFSkinToneSpecifierTypeFitzpatrick1_2",
+	// 	@"EMFSkinToneSpecifierTypeFitzpatrick3",
+	// 	@"EMFSkinToneSpecifierTypeFitzpatrick4",
+	// 	@"EMFSkinToneSpecifierTypeFitzpatrick5",
+	// 	@"EMFSkinToneSpecifierTypeFitzpatrick6",
+	// ];
+	// NSArray *inputs = @[
+	// 	@"👭", @"👬", @"👫", @"🧑‍🤝‍🧑",
+	// ];
+	// for (NSString *input in inputs) {
+	// 	for (NSString *s1 in specifiers) {
+	// 		for (NSString *s2 in specifiers) {
+	// 			NSString *result = [PSEmojiUtilities multiPersonStringForString:input skinToneVariantSpecifier:@[s1, s2]];
+	// 			NSLog(@"%@ (%@) %@ %@ %@", input, [PSEmojiUtilities joiningStringForCoupleString:input], s1, s2, result);
+	// 		}
+	// 	}
+	// }
 	for (NSString *emoji in [PSEmojiUtilities PeopleEmoji]) {
 		NSMutableString *line = [NSMutableString string];
 		NSMutableString *skinCodes = [NSMutableString string];
 		[line appendString:emoji];
 		if ([PSEmojiUtilities hasVariantsForEmoji:emoji] & PSEmojiTypeSkin) {
+			BOOL isMultiPerson = [PSEmojiUtilities isCoupleMultiSkinToneEmoji:emoji];
 			for (NSString *variant in [PSEmojiUtilities skinToneVariants:emoji]) {
 				[line appendFormat:@" %@", variant];
 				[skinCodes appendFormat:@" %@ /", toUTF32(variant)];
+				if (isMultiPerson) {
+					NSString *base = [PSEmojiUtilities emojiBaseString:variant];
+					NSCAssert4([base isEqualToString:emoji], @"Original %@ (%@) versus base %@ (%@)", emoji, toUTF32(emoji), base, toUTF32(base));
+				}
 			}
 			[line appendFormat:@" %@ |%@", toUTF32(emoji), skinCodes];
 		} else

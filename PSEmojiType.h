@@ -16,5 +16,5 @@ typedef NS_ENUM(NSInteger, PSEmojiMultiPersonType) {
   PSEmojiMultiPersonTypeFM = 1,
   PSEmojiMultiPersonTypeFF = 2,
   PSEmojiMultiPersonTypeMM = 3,
-  PSEmojiMultiPersonTypeNN = 4 // Tweak-defined
+  PSEmojiMultiPersonTypeNN = 4
 };
