@@ -82,12 +82,12 @@
 }
 
 + (BOOL)isComposedCoupleMultiSkinToneEmoji:(NSString *)emojiString {
-    return containsString(emojiString, HANDSHAKE_JOINER_ZWJ) || containsString(emojiString, HEART_JOINER);
+    return containsString(emojiString, HANDSHAKE_JOINER) || containsString(emojiString, HEART_JOINER);
 }
 
 + (BOOL)isHandholingCoupleEmoji:(NSString *)emojiString {
     return [[self CoupleMultiSkinToneEmoji] containsObject:[NSString stringWithUnichar:[self firstLongCharacter:emojiString]]]
-        || containsString(emojiString, HANDSHAKE_JOINER_ZWJ);
+        || containsString(emojiString, HANDSHAKE_JOINER);
 }
 
 + (BOOL)supportsCoupleSkinToneSelection:(NSString *)emojiString {
@@ -97,14 +97,14 @@
 + (NSArray <NSArray <NSString *> *> *)coupleSkinToneChooserVariantsForString:(NSString *)emojiString {
     PSEmojiMultiPersonType multiPersonType = [self multiPersonTypeForString:emojiString];
     if (multiPersonType) {
-        NSString *joiner = [self joiningStringForCoupleString:emojiString] ?: HANDSHAKE_JOINER_ZWJ;
+        NSString *joiner = [self joiningStringForCoupleString:emojiString] ?: HANDSHAKE_JOINER;
         return [self skinToneChooserArraysForCoupleType:multiPersonType joiner:joiner];
     }
     return nil;
 }
 
 + (NSArray <NSString *> *)tokenizedMultiPersonFromString:(NSString *)emojiString {
-    NSRange range = [emojiString rangeOfString:HANDSHAKE_JOINER_ZWJ options:NSLiteralSearch];
+    NSRange range = [emojiString rangeOfString:HANDSHAKE_JOINER options:NSLiteralSearch];
     if (range.location != NSNotFound) {
         NSString *left = [emojiString substringToIndex:range.location];
         NSString *right = [emojiString substringFromIndex:range.location + range.length];
@@ -136,11 +136,8 @@
             return PSEmojiMultiPersonTypeMM;
         if ([baseFirst isEqualToString:@"🧑‍🤝‍🧑"])
             return PSEmojiMultiPersonTypeNN;
-    }
-    if (emojiString && ([self isComposedCoupleMultiSkinToneEmoji:emojiString] || [self supportsCoupleSkinToneSelection:emojiString])) {
+    } else if (emojiString && ([self isComposedCoupleMultiSkinToneEmoji:emojiString] || [self supportsCoupleSkinToneSelection:emojiString])) {
         NSArray *tokens = [self tokenizedMultiPersonFromString:emojiString];
-        if (tokens.count != 2)
-            return 0;
         NSString *baseLeft = [self emojiBaseFirstCharacterString:tokens[0]];
         NSString *baseRight = [self emojiBaseFirstCharacterString:tokens[1]];
         if ([baseLeft isEqualToString:WOMAN]) {
@@ -158,8 +155,8 @@
 }
 
 + (NSString *)joiningStringForCoupleString:(NSString *)emojiString {
-    if (containsString(emojiString, HANDSHAKE_JOINER_ZWJ) || [[self CoupleMultiSkinToneEmoji] containsObject:emojiString])
-        return HANDSHAKE_JOINER_ZWJ;
+    if (containsString(emojiString, HANDSHAKE_JOINER) || [[self CoupleMultiSkinToneEmoji] containsObject:emojiString])
+        return HANDSHAKE_JOINER;
     if (containsString(emojiString, HEART_KISS_JOINER) || containsString(emojiString, @"💏"))
         return HEART_KISS_JOINER;
     if (containsString(emojiString, HEART_JOINER) || containsString(emojiString, @"💑"))
@@ -189,15 +186,13 @@
     if (multiPersonType) {
         NSString *joiner = [self joiningStringForCoupleString:emojiString];
         BOOL hasSilhouette = [specifier containsObject:@"EMFSkinToneSpecifierTypeFitzpatrickSilhouette"];
-        BOOL displayable = !hasSilhouette;
+        // BOOL displayable = !hasSilhouette;
         NSString *solo = nil;
         NSString *firstSuffix = nil;
         NSString *lastSuffix = nil;
-        if (hasSilhouette)
-            displayable = [[specifier firstObject] isEqualToString:@"EMFSkinToneSpecifierTypeFitzpatrickSilhouette"]
-                && [[specifier lastObject] isEqualToString:@"EMFSkinToneSpecifierTypeFitzpatrickSilhouette"];
-        if (!displayable)
-            specifier = @[@"EMFSkinToneSpecifierTypeFitzpatrick6", @"EMFSkinToneSpecifierTypeFitzpatrick6"];
+        // if (hasSilhouette)
+        //     displayable = [[specifier firstObject] isEqualToString:@"EMFSkinToneSpecifierTypeFitzpatrickSilhouette"]
+        //         && [[specifier lastObject] isEqualToString:@"EMFSkinToneSpecifierTypeFitzpatrickSilhouette"];
         if (joiner) {
             NSString *first = [specifier firstObject];
             firstSuffix = [self skinToneSuffixFromSpecifierType:first];
@@ -206,7 +201,7 @@
                 lastSuffix = [self skinToneSuffixFromSpecifierType:last];
             } else
                 lastSuffix = firstSuffix;
-            if (![joiner isEqualToString:HANDSHAKE_JOINER_ZWJ]) {
+            if (![joiner isEqualToString:HANDSHAKE_JOINER]) {
                 if (multiPersonType == PSEmojiMultiPersonTypeNN || firstSuffix.length) {
                     NSArray *tokens = [self tokenizedMultiPersonFromString:emojiString];
                     if (tokens.count <= 1)
@@ -238,14 +233,14 @@
                     if (firstSuffix == nil || lastSuffix == nil)
                         return @"👫";
                     if (![firstSuffix isEqualToString:lastSuffix] || hasSilhouette)
-                        return [NSString stringWithFormat:@"%@%@%@%@%@", WOMAN, firstSuffix, HANDSHAKE_JOINER_ZWJ, MAN, lastSuffix];
+                        return [NSString stringWithFormat:@"%@%@%@%@%@", WOMAN, firstSuffix, HANDSHAKE_JOINER, MAN, lastSuffix];
                     return [NSString stringWithFormat:@"%@%@", @"👫", firstSuffix];
                 }
                 default:
                     break;
             }
         }
-        return [NSString stringWithFormat:@"%@%@%@%@%@", solo, firstSuffix, HANDSHAKE_JOINER_ZWJ, solo, lastSuffix];
+        return [NSString stringWithFormat:@"%@%@%@%@%@", solo, firstSuffix, HANDSHAKE_JOINER, solo, lastSuffix];
     }
     return nil;
 }
@@ -255,20 +250,16 @@
     NSMutableArray *second = [NSMutableArray arrayWithCapacity:5];
     NSString *leftPerson = nil;
     NSString *rightPerson = nil;
-    NSString *duo = nil;
     switch (coupleType) {
         case PSEmojiMultiPersonTypeFM:
             leftPerson = WOMAN;
             rightPerson = MAN;
-            duo = @"👫";
             break;
         case PSEmojiMultiPersonTypeFF:
             leftPerson = rightPerson = WOMAN;
-            duo = @"👭";
             break;
         case PSEmojiMultiPersonTypeMM:
             leftPerson = rightPerson = MAN;
-            duo = @"👬";
             break;
         case PSEmojiMultiPersonTypeNN:
             leftPerson = rightPerson = NEUTRAL;
@@ -276,40 +267,40 @@
     }
     for (NSString *skin in [PSEmojiUtilities skinModifiers]) {
         [first addObject:[self coupleStringWithLeftPerson:leftPerson leftVariant:skin joiningString:joiner rightPerson:rightPerson rightVariant:nil]];
-        [second addObject:[NSString stringWithFormat:@"%@%@", duo, skin]];
+        [second addObject:[self coupleStringWithLeftPerson:leftPerson leftVariant:nil joiningString:joiner rightPerson:rightPerson rightVariant:skin]];
     }
     return @[first, second];
 }
 
 + (NSArray <NSArray <NSString *> *> *)skinToneChooserVariantsForHandHoldingCoupleType:(PSEmojiMultiPersonType)coupleType {
     if (coupleType == PSEmojiMultiPersonTypeNN)
-        return [self skinToneChooserArraysForCoupleType:coupleType joiner:HANDSHAKE_JOINER_ZWJ];
+        return [self skinToneChooserArraysForCoupleType:coupleType joiner:HANDSHAKE_JOINER];
     NSMutableArray *first = [NSMutableArray arrayWithCapacity:5];
     NSMutableArray *second = [NSMutableArray arrayWithCapacity:5];
     switch (coupleType) {
         case PSEmojiMultiPersonTypeFM: {
             for (NSString *skin in [PSEmojiUtilities skinModifiers]) {
-                [first addObject:[NSString stringWithFormat:@"%@%@%@%@%@", WOMAN, skin, HANDSHAKE_JOINER_ZWJ, MAN, ZWJ]];
-                [second addObject:[NSString stringWithFormat:@"%@%@%@%@%@", WOMAN, ZWJ, HANDSHAKE_JOINER_ZWJ, MAN, skin]];
+                [first addObject:[NSString stringWithFormat:@"%@%@%@%@%@", WOMAN, skin, HANDSHAKE_JOINER, MAN, ZWJ]];
+                [second addObject:[NSString stringWithFormat:@"%@%@%@%@%@", WOMAN, ZWJ, HANDSHAKE_JOINER, MAN, skin]];
             }
             break;
         }
         case PSEmojiMultiPersonTypeFF: {
             for (NSString *skin in [PSEmojiUtilities skinModifiers]) {
-                [first addObject:[NSString stringWithFormat:@"%@%@%@%@%@", WOMAN, skin, HANDSHAKE_JOINER_ZWJ, WOMAN, ZWJ]];
-                [second addObject:[NSString stringWithFormat:@"%@%@%@%@%@", WOMAN, ZWJ, HANDSHAKE_JOINER_ZWJ, WOMAN, skin]];
+                [first addObject:[NSString stringWithFormat:@"%@%@%@%@%@", WOMAN, skin, HANDSHAKE_JOINER, WOMAN, ZWJ]];
+                [second addObject:[NSString stringWithFormat:@"%@%@%@%@%@", WOMAN, ZWJ, HANDSHAKE_JOINER, WOMAN, skin]];
             }
             break;
         }
         case PSEmojiMultiPersonTypeMM: {
             for (NSString *skin in [PSEmojiUtilities skinModifiers]) {
-                [first addObject:[NSString stringWithFormat:@"%@%@%@%@%@", MAN, skin, HANDSHAKE_JOINER_ZWJ, MAN, ZWJ]];
-                [second addObject:[NSString stringWithFormat:@"%@%@%@%@%@", MAN, ZWJ, HANDSHAKE_JOINER_ZWJ, MAN, skin]];
+                [first addObject:[NSString stringWithFormat:@"%@%@%@%@%@", MAN, skin, HANDSHAKE_JOINER, MAN, ZWJ]];
+                [second addObject:[NSString stringWithFormat:@"%@%@%@%@%@", MAN, ZWJ, HANDSHAKE_JOINER, MAN, skin]];
             }
             break;
         }
         default:
-            return @[];
+            break;
     }
     return @[first, second];
 }
@@ -319,7 +310,7 @@
     if (multiPersonType) {
         if (silhouette)
             return [self skinToneChooserVariantsForHandHoldingCoupleType:multiPersonType];
-        NSString *joiner = [self joiningStringForCoupleString:emojiString] ?: HANDSHAKE_JOINER_ZWJ;
+        NSString *joiner = [self joiningStringForCoupleString:emojiString] ?: HANDSHAKE_JOINER;
         return [self skinToneChooserArraysForCoupleType:multiPersonType joiner:joiner];
     }
     return nil;
@@ -497,16 +488,16 @@
             } else {
                 switch (multiPersonType) {
                     case PSEmojiMultiPersonTypeFM:
-                        [variants addObject:[NSString stringWithFormat:@"👩%@‍🤝‍👨%@", leftSkin, rightSkin]];
+                        [variants addObject:[NSString stringWithFormat:@"%@%@%@%@%@", WOMAN, leftSkin, HANDSHAKE_JOINER, MAN, rightSkin]];
                         break;
                     case PSEmojiMultiPersonTypeFF:
-                        [variants addObject:[NSString stringWithFormat:@"👩%@‍🤝‍👩%@", leftSkin, rightSkin]];
+                        [variants addObject:[NSString stringWithFormat:@"%@%@%@%@%@", WOMAN, leftSkin, HANDSHAKE_JOINER, WOMAN, rightSkin]];
                         break;
                     case PSEmojiMultiPersonTypeMM:
-                        [variants addObject:[NSString stringWithFormat:@"👨%@‍🤝‍👨%@", leftSkin, rightSkin]];
+                        [variants addObject:[NSString stringWithFormat:@"%@%@%@%@%@", MAN, leftSkin, HANDSHAKE_JOINER, MAN, rightSkin]];
                         break;
                     case PSEmojiMultiPersonTypeNN:
-                        [variants addObject:[NSString stringWithFormat:@"🧑%@‍🤝‍🧑%@", leftSkin, rightSkin]];
+                        [variants addObjectsFromArray:[self skinToneVariantsForCouple:multiPersonType joiner:HANDSHAKE_JOINER]];
                         break;
                 }
             }
@@ -534,8 +525,6 @@
             leftPerson = rightPerson = NEUTRAL;
             break;
     }
-    if (leftPerson == nil || rightPerson == nil)
-        return [NSMutableArray array];
     for (NSString *leftSkin in [PSEmojiUtilities skinModifiers]) {
         for (NSString *rightSkin in [PSEmojiUtilities skinModifiers]) {
             [variants addObject:[self coupleStringWithLeftPerson:leftPerson leftVariant:leftSkin joiningString:joiner rightPerson:rightPerson rightVariant:rightSkin]];
@@ -547,7 +536,7 @@
 + (NSMutableArray <NSString *> *)skinToneVariants:(NSString *)emojiString isSkin:(BOOL)isSkin withSelf:(BOOL)withSelf {
     PSEmojiMultiPersonType multiPersonType = [self multiPersonTypeForString:emojiString];
     if (multiPersonType) {
-        NSString *joiner = [self joiningStringForCoupleString:emojiString] ?: HANDSHAKE_JOINER_ZWJ;
+        NSString *joiner = [self joiningStringForCoupleString:emojiString] ?: HANDSHAKE_JOINER;
         if ([self isHandholingCoupleEmoji:emojiString])
             return [self skinToneVariantsForMultiPersonType:multiPersonType];
         return [self skinToneVariantsForCouple:multiPersonType joiner:joiner];
