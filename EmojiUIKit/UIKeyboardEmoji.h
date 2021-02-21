@@ -14,6 +14,7 @@
 @property(retain) NSString *codePoint; // iOS 5.0
 @property(assign) CGGlyph glyph; // iOS 6
 @property(assign) NSInteger variantMask; // iOS 8.3+
++ (BOOL)shouldHighlightEmoji:(NSString *)emojiString; // iOS 14.5+
 + (instancetype)emojiWithString:(NSString *)string; // iOS 6
 + (instancetype)emojiWithString:(NSString *)string hasDingbat:(BOOL)dingbat; // iOS 7-8.2
 + (instancetype)emojiWithString:(NSString *)string withVariantMask:(NSInteger)mask; // iOS 8.3+
