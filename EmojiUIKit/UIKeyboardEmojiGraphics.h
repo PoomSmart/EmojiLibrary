@@ -1,4 +1,6 @@
 #import <UIKit/UIKBRenderConfig.h>
+#import <UIKit/UIKBTree.h>
+#import "EmojiUIKit-Structs.h"
 #import "UIKeyboardEmojiCategory.h"
 
 @interface UIKeyboardEmojiGraphics : NSObject
@@ -20,4 +22,7 @@
 - (UIImage *)categoryPlacesGenerator:(id)pressed;
 - (UIImage *)categorySymbolsGenerator:(id)pressed;
 - (UIImage *)categoryWithSymbol:(NSString *)symbol pressed:(id)pressed;
+- (UIKBTree *)protoKeyboard;
+- (UIKBTree *)protoKeyWithDisplayString:(NSString *)displayString;
+- (UIKBThemeRef)createProtoThemeForKey:(UIKBTree *)key keyboard:(UIKBTree *)keyboard state:(int)state;
 @end

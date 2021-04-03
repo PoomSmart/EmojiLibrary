@@ -1,5 +1,6 @@
 #import "_UIBackdropViewSettingsLightEmojiKeyboard.h"
 #import "_UIEmojiPageControl.h"
+#import "EmojiUIKit-Structs.h"
 #import "EmojiPageControl.h"
 #import "UIKBInputBackdropView+iOS83UIModern.h"
 #import "UIKBKeyView+KBResize.h"
