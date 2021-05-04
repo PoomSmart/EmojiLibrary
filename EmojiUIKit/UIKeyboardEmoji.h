@@ -1,4 +1,5 @@
 #import <CoreGraphics/CoreGraphics.h>
+#import <Foundation/Foundation.h>
 
 @interface UIKeyboardEmoji : NSObject {
     NSString *_emojiString;

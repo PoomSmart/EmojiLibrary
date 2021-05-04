@@ -1,3 +1,5 @@
+#import <Foundation/Foundation.h>
+
 // iOS 5-8.2
 @interface UIKeyboardEmojiPage : UIView {
     NSInteger _numCols;

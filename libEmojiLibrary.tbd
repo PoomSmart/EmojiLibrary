@@ -1,0 +1,24 @@
+--- !tapi-tbd
+tbd-version:     4
+targets:         [ i386-ios-simulator, x86_64-ios-simulator, armv7-ios, arm64-ios, 
+                   arm64e-ios ]
+uuids:
+  - target:          i386-ios-simulator
+    value:           CF067CC2-C0A2-3B74-B6FF-15DCE13D9971
+  - target:          x86_64-ios-simulator
+    value:           9177A39B-418E-3920-B3E3-9CD491853466
+  - target:          armv7-ios
+    value:           66EA4095-5866-3AF0-A22A-F584F547DB47
+  - target:          arm64-ios
+    value:           32AFC3E8-FB46-3E4A-B672-5D4724DA350D
+  - target:          arm64e-ios
+    value:           45F13F0C-1B85-359C-ACF0-6B389E8DE1B3
+flags:           [ not_app_extension_safe ]
+install-name:    '/usr/lib/libEmojiLibrary.dylib'
+current-version: 0
+compatibility-version: 0
+exports:
+  - targets:         [ armv7-ios, x86_64-ios-simulator, i386-ios-simulator, arm64-ios, 
+                       arm64e-ios ]
+    objc-classes:    [ PSEmojiUtilities ]
+...

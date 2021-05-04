@@ -1,3 +1,5 @@
+#import <Foundation/Foundation.h>
+
 // iOS 5-9.2
 @interface UIKeyboardEmojiDefaultsController : NSObject
 + (instancetype)sharedController;
