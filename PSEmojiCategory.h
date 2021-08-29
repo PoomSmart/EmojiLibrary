@@ -1,3 +1,5 @@
+#import <Foundation/Foundation.h>
+
 /*
    iOS 5 - 8.2
 
@@ -41,7 +43,7 @@
  */
 
 // Compatibility
-typedef NS_ENUM (NSInteger, IDXPSEmojiCategory) {
+typedef NS_ENUM(NSInteger, IDXPSEmojiCategory) {
     IDXPSEmojiCategoryRecent = 0,
     IDXPSEmojiCategoryPeople = 1,
     IDXPSEmojiCategoryNature = 2,
@@ -55,7 +57,7 @@ typedef NS_ENUM (NSInteger, IDXPSEmojiCategory) {
 };
 
 // iOS 9.1+
-typedef NS_ENUM (NSInteger, PSEmojiCategory) {
+typedef NS_ENUM(NSInteger, PSEmojiCategory) {
     PSEmojiCategoryRecent = 0,
     PSEmojiCategoryPeople = 1,
     PSEmojiCategoryNature = 2,

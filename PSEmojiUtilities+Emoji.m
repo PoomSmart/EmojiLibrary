@@ -7,8 +7,8 @@
 
 + (NSArray <NSString *> *)AsFakeSet:(NSArray <NSString *> *)array {
     if (IS_IOS_OR_NEWER(iOS_14_0))
-        return (NSArray <NSString *> *)[[NSOrderedSet orderedSetWithArray:array] retain];
-    return [array retain];
+        return (NSArray <NSString *> *)[NSOrderedSet orderedSetWithArray:array];
+    return array;
 }
 
 + (NSArray <NSString *> *)PeopleEmoji {

@@ -1,10 +1,9 @@
 #import "../PSHeader/Misc.h"
+#import "../PSHeader/iOSVersions.h"
 #include "PSEmojiType.h"
 #include "Header.h"
 #import "PSEmojiUtilities.h"
 #import <TextInput/NSString+TIExtras.h>
-#import <objc/runtime.h>
-#import <version.h>
 
 @implementation PSEmojiUtilities (Functions)
 
@@ -307,8 +306,6 @@
 + (NSArray <NSArray <NSString *> *> *)skinToneChooserVariantsForString:(NSString *)emojiString usesSilhouetteSpecifiers:(BOOL)silhouette {
     PSEmojiMultiPersonType multiPersonType = [self multiPersonTypeForString:emojiString];
     if (multiPersonType) {
-        // if ([self isHandholingCoupleEmoji:emojiString])
-        //     return [self skinToneChooserVariantsForHandHoldingCoupleType:multiPersonType];
         NSString *joiner = [self joiningStringForCoupleString:emojiString] ?: HANDSHAKE_JOINER;
         return [self skinToneChooserArraysForCoupleType:multiPersonType joiner:joiner];
     }
@@ -328,7 +325,7 @@
 
 + (NSString *)changeEmojiSkin:(NSString *)emojiString toSkin:(NSString *)skin {
     NSString *oldSkin = [self getSkin:emojiString];
-    if (oldSkin == nil || stringEqual(oldSkin, skin))
+    if (oldSkin == nil || [oldSkin isEqualToString:skin])
         return emojiString;
     return [emojiString stringByReplacingOccurrencesOfString:oldSkin withString:skin options:NSLiteralSearch range:NSMakeRange(0, emojiString.length)];
 }
@@ -595,12 +592,13 @@
 
 + (UIKeyboardEmoji *)emojiWithString:(NSString *)emojiString {
     UIKeyboardEmoji *emoji = nil;
-    if ([NSClassFromString(@"UIKeyboardEmoji") respondsToSelector:@selector(emojiWithString:hasDingbat:)])
-        emoji = [NSClassFromString(@"UIKeyboardEmoji") emojiWithString:emojiString hasDingbat:[self hasDingbat:emojiString]];
-    else if ([NSClassFromString(@"UIKeyboardEmoji") respondsToSelector:@selector(emojiWithString:)])
-        emoji = [NSClassFromString(@"UIKeyboardEmoji") emojiWithString:emojiString];
+    Class UIKeyboardEmoji = NSClassFromString(@"UIKeyboardEmoji");
+    if ([UIKeyboardEmoji respondsToSelector:@selector(emojiWithString:hasDingbat:)])
+        emoji = [UIKeyboardEmoji emojiWithString:emojiString hasDingbat:[self hasDingbat:emojiString]];
+    else if ([UIKeyboardEmoji respondsToSelector:@selector(emojiWithString:)])
+        emoji = [UIKeyboardEmoji emojiWithString:emojiString];
     else
-        emoji = [[[NSClassFromString(@"UIKeyboardEmoji") alloc] initWithString:emojiString] autorelease];
+        emoji = [[UIKeyboardEmoji alloc] initWithString:emojiString];
     if ([emoji respondsToSelector:@selector(setSupportsSkin:)])
         emoji.supportsSkin = [self hasSkinToneVariants:emojiString];
     return emoji;
@@ -729,20 +727,23 @@
 #endif
 
 + (void)resetEmojiPreferences {
-    if (IS_IOS_OR_NEWER(iOS_11_0)) {
-        // Better approach: Reset keyboard dictionary
-        return;
+    id preferences = nil;
+    id innerPreferences = nil;
+    if (NSClassFromString(@"UIKeyboardEmojiPreferences")) {
+        preferences = innerPreferences = [NSClassFromString(@"UIKeyboardEmojiPreferences") sharedInstance];
+        if (IS_IOS_OR_NEWER(iOS_10_2))
+            innerPreferences = [preferences valueForKey:@"_preferencesClient"];
     }
-#if !__arm64e__
-    id preferences;
-    if (NSClassFromString(@"UIKeyboardEmojiPreferences"))
-        preferences = [NSClassFromString(@"UIKeyboardEmojiPreferences") sharedInstance];
     else
-        preferences = [NSClassFromString(@"UIKeyboardEmojiDefaultsController") sharedController];
-    object_setInstanceVariable(preferences, "_defaults", (void *)[[(UIKeyboardEmojiDefaultsController *)preferences emptyDefaultsDictionary] retain]);
-    object_setInstanceVariable(preferences, "_isDefaultDirty", (void *)YES);
+        preferences = innerPreferences = [NSClassFromString(@"UIKeyboardEmojiDefaultsController") sharedController];
+    if ([innerPreferences respondsToSelector:@selector(emptyDefaultsDictionary)])
+        [innerPreferences setValue:[(UIKeyboardEmojiDefaultsController *)preferences emptyDefaultsDictionary] forKey:@"_defaults"];
+    else
+        [innerPreferences resetEmojiDefaults];
+    [innerPreferences setValue:@(YES) forKey:@"_isDefaultDirty"];
+    if ([preferences respondsToSelector:@selector(refreshLocalRecents)])
+        [(UIKeyboardEmojiPreferences *)preferences refreshLocalRecents];
     [(UIKeyboardEmojiDefaultsController *)preferences writeEmojiDefaults];
-#endif
 }
 
 @end

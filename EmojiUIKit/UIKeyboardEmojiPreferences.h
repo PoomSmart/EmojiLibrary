@@ -8,4 +8,5 @@
 - (void)writeEmojiDefaults;
 - (NSInteger)selectedCategoryType;
 - (NSUInteger)emojiCategoryDefaultsIndex:(UIKeyboardEmojiCategory *)category;
+- (void)refreshLocalRecents;
 @end

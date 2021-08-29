@@ -1,5 +1,5 @@
 export PREFIX = $(THEOS)/toolchain/Xcode11.xctoolchain/usr/bin/
-PACKAGE_VERSION = 1.2.3
+PACKAGE_VERSION = 1.3.0
 
 ifeq ($(SIMULATOR),1)
 	TARGET = simulator:clang:latest:8.0
@@ -13,6 +13,7 @@ include $(THEOS)/makefiles/common.mk
 
 LIBRARY_NAME = libEmojiLibrary
 libEmojiLibrary_FILES = PSEmojiUtilities.m PSEmojiUtilities+Emoji.m PSEmojiUtilities+Functions.m
+libEmojiLibrary_CFLAGS = -fobjc-arc
 
 include $(THEOS_MAKE_PATH)/library.mk
 # make setup SIMULATOR=1 PL_SIMULATOR_VERSION=<target-iOS-version>
