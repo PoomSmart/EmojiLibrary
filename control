@@ -1,0 +1,11 @@
+Package: com.ps.emojilibrary
+Name: EmojiLibrary
+Version: 1.0.0
+Architecture: iphoneos-arm
+Description: Master library for PoomSmart's emoji tweaks.
+Maintainer: PoomSmart
+Author: PoomSmart
+Section: Development
+Depiction: https://poomsmart.github.io/repo/depictions/emojilibrary.html
+SileoDepiction: https://poomsmart.github.io/repo/sileodepictions/emojilibrary.json
+Tag: role::developer

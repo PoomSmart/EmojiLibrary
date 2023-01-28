@@ -1,0 +1,6 @@
+obj
+.theos
+packages/*
+.DS_Store
+Font-*
+EmojiTester/bin
