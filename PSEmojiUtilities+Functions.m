@@ -1,5 +1,5 @@
-#import "../PSHeader/Misc.h"
-#import "../PSHeader/iOSVersions.h"
+#import <PSHeader/Misc.h>
+#import <PSHeader/iOSVersions.h>
 #include "PSEmojiType.h"
 #include "Header.h"
 #import "PSEmojiUtilities.h"
