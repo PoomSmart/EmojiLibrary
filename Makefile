@@ -4,15 +4,19 @@ ifeq ($(SIMULATOR),1)
 	TARGET = simulator:clang:latest:8.0
 	ARCHS = x86_64 i386
 else
-	TARGET = iphone:clang:14.5:5.0
-	ARCHS = armv7 arm64 arm64e
+	ifeq ($(THEOS_PACKAGE_SCHEME),rootless)
+		TARGET = iphone:clang:latest:14.0
+		ARCHS = arm64 arm64e
+	else
+		TARGET = iphone:clang:latest:5.0
+	endif
 endif
 
 include $(THEOS)/makefiles/common.mk
 
 LIBRARY_NAME = libEmojiLibrary
-libEmojiLibrary_FILES = PSEmojiUtilities.m PSEmojiUtilities+Emoji.m PSEmojiUtilities+Functions.m
-libEmojiLibrary_CFLAGS = -fobjc-arc
+$(LIBRARY_NAME)_FILES = PSEmojiUtilities.m PSEmojiUtilities+Emoji.m PSEmojiUtilities+Functions.m
+$(LIBRARY_NAME)_CFLAGS = -fobjc-arc
 
 include $(THEOS_MAKE_PATH)/library.mk
 # make setup SIMULATOR=1 PL_SIMULATOR_VERSION=<target-iOS-version>
