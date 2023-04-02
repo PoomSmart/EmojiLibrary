@@ -13,7 +13,7 @@ uuids:
     value:           32AFC3E8-FB46-3E4A-B672-5D4724DA350D
   - target:          arm64e-ios
     value:           45F13F0C-1B85-359C-ACF0-6B389E8DE1B3
-install-name:    '/usr/lib/libEmojiLibrary.dylib'
+install-name:    '@rpath/libEmojiLibrary.dylib'
 current-version: 0
 compatibility-version: 0
 exports:
