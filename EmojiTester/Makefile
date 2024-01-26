@@ -3,9 +3,6 @@
 # Changed: _THEOS_TARGET_DEFAULT_OS_DEPLOYMENT_VERSION = 14.0
 TARGET = uikitformac
 
-# FIXME: This tool doesn't work on Apple Silicon yet
-# ARCHS = $(shell uname -m)
-
 include $(THEOS)/makefiles/common.mk
 
 TOOL_NAME = EmojiTester

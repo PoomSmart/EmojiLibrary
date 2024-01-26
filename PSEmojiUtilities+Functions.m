@@ -457,8 +457,12 @@
     return [emojiString stringByReplacingOccurrencesOfString:oldSkin withString:skin options:NSLiteralSearch range:NSMakeRange(0, emojiString.length)];
 }
 
-+ (NSString *)emojiGenderString:(NSString *)emojiString baseFirst:(NSString *)baseFirst skin:(NSString *)skin {
++ (NSString *)emojiGenderString:(NSString *)emojiString baseFirst:(NSString *)baseFirst base:(NSString *)base skin:(NSString *)skin {
     NSString *_baseFirst = baseFirst ? baseFirst : [self emojiBaseFirstCharacterString:emojiString];
+    if ([self PS_isDirectionalEmoji:base]) {
+        NSRange baseRange = [base rangeOfString:_baseFirst options:NSLiteralSearch];
+        return baseRange.location != NSNotFound ? [base stringByReplacingCharactersInRange:baseRange withString:[NSString stringWithFormat:@"%@%@", _baseFirst, skin]] : nil;
+    }
     BOOL needVariantSelector = [self genderEmojiBaseStringNeedVariantSelector:_baseFirst];
     NSString *_skin = skin ? skin : @"";
     NSString *variantSelector = _skin.length == 0 && needVariantSelector ? FE0F : @"";
@@ -499,6 +503,10 @@
 
 + (BOOL)isMultiPersonFamilySkinToneEmoji:(NSString *)emojiString {
     return [[self MultiPersonFamilySkinToneEmoji] containsObject:emojiString];
+}
+
++ (BOOL)PS_isDirectionalEmoji:(NSString *)emojiString {
+    return [[self PS_DirectionalEmoji] containsObject:emojiString];
 }
 
 + (NSString *)emojiBaseString:(NSString *)emojiString {
@@ -542,7 +550,7 @@
         return baseEmoji;
     NSString *baseFirst = [self emojiBaseFirstCharacterString:emojiString];
     if ([self hasGender:emojiString])
-        return [self emojiGenderString:emojiString baseFirst:baseFirst skin:nil];
+        return [self emojiGenderString:emojiString baseFirst:baseFirst base:baseEmoji skin:nil];
     if ([[self dingbatEmojiBaseStringsNeedVariantSelector] containsObject:baseFirst])
         return [baseFirst stringByAppendingString:FE0F];
     return baseFirst;
@@ -573,8 +581,8 @@
 + (NSString *)skinToneVariant:(NSString *)emojiString baseFirst:(NSString *)baseFirst base:(NSString *)base skin:(NSString *)skin {
     NSString *_baseFirst = baseFirst ? baseFirst : [self emojiBaseFirstCharacterString:emojiString];
     NSString *_base = base ? base : [self emojiBaseString:emojiString];
-    if ([self isGenderEmoji:_baseFirst] && [self hasGender:emojiString])
-        return [self emojiGenderString:emojiString baseFirst:_baseFirst skin:skin];
+    if (([self isGenderEmoji:_baseFirst] || [self isGenderEmoji:_base]) && [self hasGender:emojiString])
+        return [self emojiGenderString:emojiString baseFirst:_baseFirst base:_base skin:skin];
     if ([self isProfessionEmoji:_base]) {
         NSRange baseRange = [_base rangeOfString:_baseFirst options:NSLiteralSearch];
         return baseRange.location != NSNotFound ? [_base stringByReplacingCharactersInRange:baseRange withString:[NSString stringWithFormat:@"%@%@", _baseFirst, skin]] : nil;
@@ -719,7 +727,7 @@
 }
 
 + (BOOL)hasSkinToneVariants:(NSString *)emojiString {
-    if ([self isMultiPersonFamilySkinToneEmoji:emojiString])
+    if ([self isMultiPersonFamilySkinToneEmoji:emojiString] || [[self PS_OtherMultiplePersonEmoji] containsObject:emojiString])
         return NO;
     NSString *baseFirst = [self emojiBaseFirstCharacterString:emojiString];
     return [self isSkinToneEmoji:baseFirst] || [self isCoupleMultiSkinToneEmoji:baseFirst];

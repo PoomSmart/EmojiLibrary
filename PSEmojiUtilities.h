@@ -52,6 +52,9 @@
 + (NSArray <NSString *> *)MultiPersonFamilySkinToneEmoji;
 + (NSArray <NSString *> *)ExtendedCoupleMultiSkinToneEmoji;
 
++ (NSArray <NSString *> *)PS_OtherMultiplePersonEmoji;
++ (NSArray <NSString *> *)PS_DirectionalEmoji;
+
 @end
 
 @interface PSEmojiUtilities (Functions)
@@ -72,7 +75,7 @@
 + (NSString *)changeEmojiSkin:(NSString *)emojiString toSkin:(NSString *)skin;
 + (NSString *)emojiBaseFirstCharacterString:(NSString *)emojiString;
 + (NSString *)professionSkinToneEmojiBaseKey:(NSString *)emojiString;
-+ (NSString *)emojiGenderString:(NSString *)emojiString baseFirst:(NSString *)baseFirst skin:(NSString *)skin;
++ (NSString *)emojiGenderString:(NSString *)emojiString baseFirst:(NSString *)baseFirst base:(NSString *)base skin:(NSString *)skin;
 + (NSString *)emojiBaseString:(NSString *)emojiString;
 + (NSString *)skinToneVariant:(NSString *)emojiString baseFirst:(NSString *)baseFirst base:(NSString *)base skin:(NSString *)skin;
 + (NSString *)skinToneVariant:(NSString *)emojiString skin:(NSString *)skin;
@@ -115,6 +118,8 @@
 + (BOOL)isBaseHandshakeOrHandshakeWithSkintonesEmoji:(NSString *)emojiString;
 + (BOOL)isMultiPersonFamilySkinToneEmoji:(NSString *)emojiString;
 + (BOOL)supportsCoupleSkinToneSelection:(NSString *)emojiString;
+
++ (BOOL)PS_isDirectionalEmoji:(NSString *)emojiString;
 
 + (PSEmojiMultiSkinType)multiPersonTypeForString:(NSString *)emojiString;
 + (NSUInteger)hasVariantsForEmoji:(NSString *)emojiString;
