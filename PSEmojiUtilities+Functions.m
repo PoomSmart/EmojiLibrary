@@ -1,9 +1,10 @@
+#import <TextInput/NSString+TIExtras.h>
 #import <PSHeader/Misc.h>
 #import <PSHeader/iOSVersions.h>
-#include "PSEmojiType.h"
 #include "Header.h"
+#include "PSEmojiType.h"
 #import "PSEmojiUtilities.h"
-#import <TextInput/NSString+TIExtras.h>
+#import "PSEmojiCategory.h"
 
 @implementation PSEmojiUtilities (Functions)
 
@@ -20,7 +21,7 @@
 }
 
 + (UChar32)firstLongCharacter:(NSString *)string {
-#if __LP64__ && !TARGET_OS_OSX && !FALLBACK_FLC
+#if __LP64__ && TARGET_OS_IOS
     return [string _firstLongCharacter];
 #else
     UChar32 cbase = 0;
@@ -457,22 +458,6 @@
     return [emojiString stringByReplacingOccurrencesOfString:oldSkin withString:skin options:NSLiteralSearch range:NSMakeRange(0, emojiString.length)];
 }
 
-+ (NSString *)emojiGenderString:(NSString *)emojiString baseFirst:(NSString *)baseFirst base:(NSString *)base skin:(NSString *)skin {
-    NSString *_baseFirst = baseFirst ? baseFirst : [self emojiBaseFirstCharacterString:emojiString];
-    if ([self PS_isDirectionalEmoji:base]) {
-        NSRange baseRange = [base rangeOfString:_baseFirst options:NSLiteralSearch];
-        return baseRange.location != NSNotFound ? [base stringByReplacingCharactersInRange:baseRange withString:[NSString stringWithFormat:@"%@%@", _baseFirst, skin]] : nil;
-    }
-    BOOL needVariantSelector = [self genderEmojiBaseStringNeedVariantSelector:_baseFirst];
-    NSString *_skin = skin ? skin : @"";
-    NSString *variantSelector = _skin.length == 0 && needVariantSelector ? FE0F : @"";
-    if (containsString(emojiString, FEMALE))
-        return [NSString stringWithFormat:@"%@%@%@%@", _baseFirst, variantSelector, _skin, ZWJ2640FE0F];
-    if (containsString(emojiString, MALE))
-        return [NSString stringWithFormat:@"%@%@%@%@", _baseFirst, variantSelector, _skin, ZWJ2642FE0F];
-    return nil;
-}
-
 + (BOOL)isNoneVariantEmoji:(NSString *)emojiString {
     return [[self NoneVariantEmoji] containsObject:emojiString];
 }
@@ -503,10 +488,6 @@
 
 + (BOOL)isMultiPersonFamilySkinToneEmoji:(NSString *)emojiString {
     return [[self MultiPersonFamilySkinToneEmoji] containsObject:emojiString];
-}
-
-+ (BOOL)PS_isDirectionalEmoji:(NSString *)emojiString {
-    return [[self PS_DirectionalEmoji] containsObject:emojiString];
 }
 
 + (NSString *)emojiBaseString:(NSString *)emojiString {
@@ -548,9 +529,19 @@
     NSString *baseEmoji = [self professionSkinToneEmojiBaseKey:emojiString];
     if ([self isProfessionEmoji:baseEmoji])
         return baseEmoji;
+    // Extra
+    baseEmoji = [baseEmoji stringByReplacingOccurrencesOfString:ZWJ27A1FE0F withString:@""];
+    if ([self isProfessionEmoji:baseEmoji])
+        return [baseEmoji stringByAppendingString:ZWJ27A1FE0F];
     NSString *baseFirst = [self emojiBaseFirstCharacterString:emojiString];
-    if ([self hasGender:emojiString])
-        return [self emojiGenderString:emojiString baseFirst:baseFirst base:baseEmoji skin:nil];
+    if ([self hasGender:emojiString]) {
+        NSString *variantSelector = [self genderEmojiBaseStringNeedVariantSelector:baseFirst] ? FE0F : @"";
+        if (containsString(emojiString, FEMALE))
+            return [NSString stringWithFormat:@"%@%@%@", baseFirst, variantSelector, ZWJ2640FE0F];
+        if (containsString(emojiString, MALE))
+            return [NSString stringWithFormat:@"%@%@%@", baseFirst, variantSelector, ZWJ2642FE0F];
+        return nil;
+    }
     if ([[self dingbatEmojiBaseStringsNeedVariantSelector] containsObject:baseFirst])
         return [baseFirst stringByAppendingString:FE0F];
     return baseFirst;
@@ -576,24 +567,6 @@
         finalRightVariant = @"";
     }
     return [NSString stringWithFormat:@"%@%@%@%@%@", finalLeftPerson, finalLeftVariant, joiningString, finalRightPerson, finalRightVariant];
-}
-
-+ (NSString *)skinToneVariant:(NSString *)emojiString baseFirst:(NSString *)baseFirst base:(NSString *)base skin:(NSString *)skin {
-    NSString *_baseFirst = baseFirst ? baseFirst : [self emojiBaseFirstCharacterString:emojiString];
-    NSString *_base = base ? base : [self emojiBaseString:emojiString];
-    if (([self isGenderEmoji:_baseFirst] || [self isGenderEmoji:_base]) && [self hasGender:emojiString])
-        return [self emojiGenderString:emojiString baseFirst:_baseFirst base:_base skin:skin];
-    if ([self isProfessionEmoji:_base]) {
-        NSRange baseRange = [_base rangeOfString:_baseFirst options:NSLiteralSearch];
-        return baseRange.location != NSNotFound ? [_base stringByReplacingCharactersInRange:baseRange withString:[NSString stringWithFormat:@"%@%@", _baseFirst, skin]] : nil;
-    }
-    if ([self isDingbatVariantsEmoji:baseFirst])
-        return [NSString stringWithFormat:@"%@%@%@", baseFirst, skin, FE0F];
-    return [NSString stringWithFormat:@"%@%@", _baseFirst, skin];
-}
-
-+ (NSString *)skinToneVariant:(NSString *)emojiString skin:(NSString *)skin {
-    return [self skinToneVariant:emojiString baseFirst:nil base:nil skin:skin];
 }
 
 + (NSMutableArray <NSString *> *)skinToneVariantsForMultiPersonType:(PSEmojiMultiSkinType)multiSkinType {
@@ -674,7 +647,7 @@
     return variants;
 }
 
-+ (NSMutableArray <NSString *> *)skinToneVariants:(NSString *)emojiString isSkin:(BOOL)isSkin withSelf:(BOOL)withSelf {
++ (NSMutableArray <NSString *> *)skinToneVariantsForString:(NSString *)emojiString withSelf:(BOOL)withSelf {
     PSEmojiMultiSkinType multiSkinType = [self multiPersonTypeForString:emojiString];
     if (multiSkinType) {
         if (multiSkinType == PSEmojiMultiSkinTypeHandshake)
@@ -685,28 +658,56 @@
         return [self skinToneVariantsForCouple:multiSkinType joiner:joiner];
     }
     NSString *baseFirst = [self emojiBaseFirstCharacterString:emojiString];
-    if (isSkin || [self isSkinToneEmoji:baseFirst]) {
-        NSString *base = [self emojiBaseString:emojiString];
-        NSMutableArray <NSString *> *skins = [NSMutableArray array];
-        if (withSelf)
-            [skins addObject:base];
-        for (NSString *skin in [self skinModifiers])
-            [skins addObject:[self skinToneVariant:emojiString baseFirst:baseFirst base:base skin:skin]];
-        return skins;
+    if (![self isSkinToneEmoji:baseFirst]) return nil;
+    NSString *base = [self emojiBaseString:emojiString];
+    NSMutableArray <NSString *> *skins = [NSMutableArray array];
+    NSArray <NSString *> *skinModifiers = [self skinModifiers];
+    int index = -1;
+    while (1) {
+        NSString *emoji = nil;
+        if ([self isGenderEmoji:baseFirst]) {
+            NSString *third = @"";
+            if (containsString(emojiString, MALE)) third = ZWJ2642FE0F;
+            else if (containsString(emojiString, FEMALE)) third = ZWJ2640FE0F;
+            NSString *second = [self genderEmojiBaseStringNeedVariantSelector:baseFirst] ? FE0F : @"";
+            if (index == -1)
+                emoji = [NSString stringWithFormat:@"%@%@%@", baseFirst, second, third];
+            else
+                emoji = [NSString stringWithFormat:@"%@%@%@", baseFirst, skinModifiers[index], third];
+            if ([emojiString hasSuffix:ZWJ27A1FE0F])
+                emoji = [emoji stringByAppendingString:ZWJ27A1FE0F];
+        } else {
+            BOOL isProfessionEmoji = [self isProfessionEmoji:base];
+            // Extra
+            if (!isProfessionEmoji)
+                isProfessionEmoji = [self isProfessionEmoji:[base stringByReplacingOccurrencesOfString:ZWJ27A1FE0F withString:@""]];
+            if (isProfessionEmoji) {
+                if (index == -1)
+                    emoji = base;
+                else {
+                    NSRange baseFirstRange = [base rangeOfString:baseFirst options:NSLiteralSearch];
+                    NSString *out = [NSString stringWithFormat:@"%@%@", baseFirst, skinModifiers[index]];
+                    emoji = [base stringByReplacingCharactersInRange:baseFirstRange withString:out];
+                }
+            } else {
+                if (index == -1) {
+                    if ([self isDingbatVariantsEmoji:baseFirst])
+                        emoji = [NSString stringWithFormat:@"%@%@", baseFirst, FE0F];
+                    else
+                        emoji = base;
+                } else
+                    emoji = [NSString stringWithFormat:@"%@%@", baseFirst, skinModifiers[index]];
+            }
+        }
+        if (index != -1 || withSelf)
+            [skins addObject:emoji];
+        if (++index == 5) break;
     }
-    return nil;
+    return skins;
 }
 
-+ (NSMutableArray <NSString *> *)skinToneVariants:(NSString *)emojiString isSkin:(BOOL)isSkin {
-    return [self skinToneVariants:emojiString isSkin:isSkin withSelf:NO];
-}
-
-+ (NSMutableArray <NSString *> *)skinToneVariants:(NSString *)emojiString withSelf:(BOOL)withSelf {
-    return [self hasSkinToneVariants:emojiString] ? [self skinToneVariants:emojiString isSkin:YES withSelf:withSelf] : nil;
-}
-
-+ (NSMutableArray <NSString *> *)skinToneVariants:(NSString *)emojiString {
-    return [self skinToneVariants:emojiString withSelf:NO];
++ (NSMutableArray <NSString *> *)skinToneVariantsForString:(NSString *)emojiString {
+    return [self skinToneVariantsForString:emojiString withSelf:YES];
 }
 
 + (NSUInteger)hasVariantsForEmoji:(NSString *)emojiString {
@@ -714,7 +715,7 @@
     if (![self isNoneVariantEmoji:emojiString]) {
         if ([self isDingbatVariantsEmoji:emojiString])
             variant |= PSEmojiTypeDingbat;
-        if ([self hasSkinToneVariants:emojiString]) // isSkinToneEmoji || isCoupleMultiSkinToneEmoji
+        if ([self hasSkinToneVariants:emojiString])
             variant |= PSEmojiTypeSkin;
         if ([self isGenderEmoji:emojiString]) {
             if (containsString(emojiString, ZWJ2640) || containsString(emojiString, ZWJ2642))
@@ -737,45 +738,7 @@
     return emojiString.length && [self isDingbatVariantsEmoji:emojiString];
 }
 
-+ (UIKeyboardEmoji *)emojiWithString:(NSString *)emojiString {
-    UIKeyboardEmoji *emoji = nil;
-    Class UIKeyboardEmoji = NSClassFromString(@"UIKeyboardEmoji");
-    if ([UIKeyboardEmoji respondsToSelector:@selector(emojiWithString:hasDingbat:)])
-        emoji = [UIKeyboardEmoji emojiWithString:emojiString hasDingbat:[self hasDingbat:emojiString]];
-    else if ([UIKeyboardEmoji respondsToSelector:@selector(emojiWithString:)])
-        emoji = [UIKeyboardEmoji emojiWithString:emojiString];
-    else
-        emoji = [[UIKeyboardEmoji alloc] initWithString:emojiString];
-    if ([emoji respondsToSelector:@selector(setSupportsSkin:)])
-        emoji.supportsSkin = [self hasSkinToneVariants:emojiString];
-    return emoji;
-}
-
-+ (UIKeyboardEmoji *)emojiWithString:(NSString *)emojiString withVariantMask:(NSInteger)variantMask {
-    return [NSClassFromString(@"UIKeyboardEmoji") emojiWithString:emojiString withVariantMask:variantMask];
-}
-
-+ (UIKeyboardEmoji *)emojiWithStringUniversal:(NSString *)emojiString {
-    if ([NSClassFromString(@"UIKeyboardEmoji") respondsToSelector:@selector(emojiWithString:withVariantMask:)])
-        return [self emojiWithString:emojiString withVariantMask:[self hasVariantsForEmoji:emojiString]];
-    return [self emojiWithString:emojiString];
-}
-
-+ (void)addEmoji:(NSMutableArray <UIKeyboardEmoji *> *)emojiArray emojiString:(NSString *)emojiString withVariantMask:(NSInteger)variantMask {
-    if (emojiString == nil)
-        return;
-    UIKeyboardEmoji *emoji = [self emojiWithString:emojiString withVariantMask:variantMask];
-    if (emoji)
-        [emojiArray addObject:emoji];
-}
-
-+ (void)addEmoji:(NSMutableArray <UIKeyboardEmoji *> *)emojiArray emojiString:(NSString *)emojiString {
-    if (emojiString == nil)
-        return;
-    UIKeyboardEmoji *emoji = [self emojiWithString:emojiString];
-    if (emoji)
-        [emojiArray addObject:emoji];
-}
+#if TARGET_OS_IOS
 
 #if !__arm64e__
 
@@ -788,29 +751,14 @@
         NSString *skin = [self getSkin:emojiString];
         if (skin) {
             NSString *emojiWithoutSkin = [self changeEmojiSkin:emojiString toSkin:@""];
-            NSString *result = [self skinToneVariant:emojiWithoutSkin skin:skin];
+            NSArray <NSString *> *skins = [self skinToneVariantsForString:emojiWithoutSkin];
+            NSUInteger skinIndex = [[self skinModifiers] indexOfObject:skin];
+            NSString *result = skins[skinIndex];
             return result;
         }
     }
     return emojiString;
 }
-
-+ (UIKeyboardEmojiCategory *)prepopulatedCategory {
-    static UIKeyboardEmojiCategory *category = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        category = [[NSClassFromString(@"UIKeyboardEmojiCategory") alloc] init];
-        category.categoryType = PSEmojiCategoryPrepopulated;
-        NSArray <NSString *> *prepopulated = [self PrepopulatedEmoji];
-        NSMutableArray <UIKeyboardEmoji *> *emojis = [NSMutableArray arrayWithCapacity:prepopulated.count];
-        for (NSString *emojiString in prepopulated)
-            [self addEmoji:emojis emojiString:emojiString withVariantMask:[self hasVariantsForEmoji:emojiString]];
-        category.emoji = emojis;
-    });
-    return category;
-}
-
-#if !TARGET_OS_OSX
 
 + (UIKeyboardEmojiCollectionViewCell *)collectionView:(UICollectionView *)collectionView_ cellForItemAtIndexPath:(NSIndexPath *)indexPath inputView:(UIKeyboardEmojiCollectionInputView *)inputView {
     UIKeyboardEmojiCollectionView *collectionView = (UIKeyboardEmojiCollectionView *)[inputView valueForKey:@"_collectionView"];
@@ -855,20 +803,59 @@
     return cell;
 }
 
-#endif
++ (UIKeyboardEmoji *)emojiWithString:(NSString *)emojiString {
+    UIKeyboardEmoji *emoji = nil;
+    Class UIKeyboardEmoji = NSClassFromString(@"UIKeyboardEmoji");
+    if ([UIKeyboardEmoji respondsToSelector:@selector(emojiWithString:hasDingbat:)])
+        emoji = [UIKeyboardEmoji emojiWithString:emojiString hasDingbat:[self hasDingbat:emojiString]];
+    else if ([UIKeyboardEmoji respondsToSelector:@selector(emojiWithString:)])
+        emoji = [UIKeyboardEmoji emojiWithString:emojiString];
+    else
+        emoji = [[UIKeyboardEmoji alloc] initWithString:emojiString];
+    if ([emoji respondsToSelector:@selector(setSupportsSkin:)])
+        emoji.supportsSkin = [self hasSkinToneVariants:emojiString];
+    return emoji;
+}
 
-#endif
++ (UIKeyboardEmoji *)emojiWithString:(NSString *)emojiString withVariantMask:(NSInteger)variantMask {
+    return [NSClassFromString(@"UIKeyboardEmoji") emojiWithString:emojiString withVariantMask:variantMask];
+}
 
-#if !__LP64__
++ (UIKeyboardEmoji *)emojiWithStringUniversal:(NSString *)emojiString {
+    if ([NSClassFromString(@"UIKeyboardEmoji") respondsToSelector:@selector(emojiWithString:withVariantMask:)])
+        return [self emojiWithString:emojiString withVariantMask:[self hasVariantsForEmoji:emojiString]];
+    return [self emojiWithString:emojiString];
+}
 
-+ (CGGlyph)emojiGlyphShift:(CGGlyph)glyph {
-    if (glyph >= 5 && glyph <= 16) // 0 - 9
-        return glyph + 73;
-    if (glyph == 4) // #
-        return  glyph + 72;
-    if (glyph == 44) // *
-        return glyph + 33;
-    return glyph;
++ (void)addEmoji:(NSMutableArray <UIKeyboardEmoji *> *)emojiArray emojiString:(NSString *)emojiString withVariantMask:(NSInteger)variantMask {
+    if (emojiString == nil)
+        return;
+    UIKeyboardEmoji *emoji = [self emojiWithString:emojiString withVariantMask:variantMask];
+    if (emoji)
+        [emojiArray addObject:emoji];
+}
+
++ (void)addEmoji:(NSMutableArray <UIKeyboardEmoji *> *)emojiArray emojiString:(NSString *)emojiString {
+    if (emojiString == nil)
+        return;
+    UIKeyboardEmoji *emoji = [self emojiWithString:emojiString];
+    if (emoji)
+        [emojiArray addObject:emoji];
+}
+
++ (UIKeyboardEmojiCategory *)prepopulatedCategory {
+    static UIKeyboardEmojiCategory *category = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        category = [[NSClassFromString(@"UIKeyboardEmojiCategory") alloc] init];
+        category.categoryType = PSEmojiCategoryPrepopulated;
+        NSArray <NSString *> *prepopulated = [self PrepopulatedEmoji];
+        NSMutableArray <UIKeyboardEmoji *> *emojis = [NSMutableArray arrayWithCapacity:prepopulated.count];
+        for (NSString *emojiString in prepopulated)
+            [self addEmoji:emojis emojiString:emojiString withVariantMask:[self hasVariantsForEmoji:emojiString]];
+        category.emoji = emojis;
+    });
+    return category;
 }
 
 #endif
@@ -892,5 +879,21 @@
         [(UIKeyboardEmojiPreferences *)preferences refreshLocalRecents];
     [(UIKeyboardEmojiDefaultsController *)preferences writeEmojiDefaults];
 }
+
+#if !__LP64__
+
++ (CGGlyph)emojiGlyphShift:(CGGlyph)glyph {
+    if (glyph >= 5 && glyph <= 16) // 0 - 9
+        return glyph + 73;
+    if (glyph == 4) // #
+        return  glyph + 72;
+    if (glyph == 44) // *
+        return glyph + 33;
+    return glyph;
+}
+
+#endif
+
+#endif
 
 @end

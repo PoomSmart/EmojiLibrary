@@ -1,3 +1,4 @@
+#import <CoreGraphics/CoreGraphics.h>
 #import "Header.h"
 #import "PSEmojiType.h"
 
@@ -9,6 +10,7 @@
 #define ZWJ2642 @"‍♂"
 #define ZWJ2640FE0F @"‍♀️"
 #define ZWJ2642FE0F @"‍♂️"
+#define ZWJ27A1FE0F @"‍➡️"
 #define HANDSHAKE @"🤝"
 #define HANDSHAKE_JOINER @"‍🤝‍"
 #define LEFTHAND @"🫱"
@@ -53,7 +55,6 @@
 + (NSArray <NSString *> *)ExtendedCoupleMultiSkinToneEmoji;
 
 + (NSArray <NSString *> *)PS_OtherMultiplePersonEmoji;
-+ (NSArray <NSString *> *)PS_DirectionalEmoji;
 
 @end
 
@@ -75,30 +76,10 @@
 + (NSString *)changeEmojiSkin:(NSString *)emojiString toSkin:(NSString *)skin;
 + (NSString *)emojiBaseFirstCharacterString:(NSString *)emojiString;
 + (NSString *)professionSkinToneEmojiBaseKey:(NSString *)emojiString;
-+ (NSString *)emojiGenderString:(NSString *)emojiString baseFirst:(NSString *)baseFirst base:(NSString *)base skin:(NSString *)skin;
 + (NSString *)emojiBaseString:(NSString *)emojiString;
-+ (NSString *)skinToneVariant:(NSString *)emojiString baseFirst:(NSString *)baseFirst base:(NSString *)base skin:(NSString *)skin;
-+ (NSString *)skinToneVariant:(NSString *)emojiString skin:(NSString *)skin;
 + (NSString *)skinToneSpecifierTypeFromEmojiFitzpatrickModifier:(int)modifier;
 + (NSString *)multiPersonStringForString:(NSString *)emojiString skinToneVariantSpecifier:(NSArray <NSString *> *)specifier;
 + (NSString *)joiningStringForCoupleString:(NSString *)emojiString;
-
-#if !__arm64e__
-
-+ (NSString *)overrideKBTreeEmoji:(NSString *)emojiString;
-
-+ (BOOL)sectionHasSkin:(NSInteger)section;
-
-#if !TARGET_OS_OSX
-+ (UIKeyboardEmojiCollectionViewCell *)collectionView:(UICollectionView *)collectionView_ cellForItemAtIndexPath:(NSIndexPath *)indexPath inputView:(UIKeyboardEmojiCollectionInputView *)inputView;
-#endif
-+ (UIKeyboardEmojiCategory *)prepopulatedCategory;
-
-#endif
-
-#if !__LP64__
-+ (CGGlyph)emojiGlyphShift:(CGGlyph)glyph;
-#endif
 
 + (BOOL)genderEmojiBaseStringNeedVariantSelector:(NSString *)emojiBaseString;
 + (BOOL)emojiString:(NSString *)emojiString inGroup:(NSArray <NSString *> *)group;
@@ -119,8 +100,6 @@
 + (BOOL)isMultiPersonFamilySkinToneEmoji:(NSString *)emojiString;
 + (BOOL)supportsCoupleSkinToneSelection:(NSString *)emojiString;
 
-+ (BOOL)PS_isDirectionalEmoji:(NSString *)emojiString;
-
 + (PSEmojiMultiSkinType)multiPersonTypeForString:(NSString *)emojiString;
 + (NSUInteger)hasVariantsForEmoji:(NSString *)emojiString;
 
@@ -128,10 +107,19 @@
 + (NSArray <NSString *> *)tokenizedHandshakeFromString:(NSString *)emojiString;
 + (NSArray <NSString *> *)skinToneSpecifiersForString:(NSString *)emojiString;
 + (NSMutableArray <NSString *> *)skinToneVariantsForCouple:(PSEmojiMultiSkinType)multiSkinType joiner:(NSString *)joiner;
-+ (NSMutableArray <NSString *> *)skinToneVariants:(NSString *)emojiString isSkin:(BOOL)isSkin withSelf:(BOOL)withSelf;
-+ (NSMutableArray <NSString *> *)skinToneVariants:(NSString *)emojiString isSkin:(BOOL)isSkin;
-+ (NSMutableArray <NSString *> *)skinToneVariants:(NSString *)emojiString withSelf:(BOOL)withSelf;
-+ (NSMutableArray <NSString *> *)skinToneVariants:(NSString *)emojiString;
++ (NSMutableArray <NSString *> *)skinToneVariantsForString:(NSString *)emojiString;
++ (NSMutableArray <NSString *> *)skinToneVariantsForString:(NSString *)emojiString withSelf:(BOOL)withSelf;
+
+#if TARGET_OS_IOS
+
+#if !__arm64e__
+
++ (NSString *)overrideKBTreeEmoji:(NSString *)emojiString;
+
++ (BOOL)sectionHasSkin:(NSInteger)section;
+
++ (UIKeyboardEmojiCollectionViewCell *)collectionView:(UICollectionView *)collectionView_ cellForItemAtIndexPath:(NSIndexPath *)indexPath inputView:(UIKeyboardEmojiCollectionInputView *)inputView;
++ (UIKeyboardEmojiCategory *)prepopulatedCategory;
 
 + (UIKeyboardEmoji *)emojiWithString:(NSString *)emojiString;
 + (UIKeyboardEmoji *)emojiWithString:(NSString *)emojiString withVariantMask:(NSInteger)variantMask;
@@ -140,7 +128,15 @@
 + (void)addEmoji:(NSMutableArray <UIKeyboardEmoji *> *)emojiArray emojiString:(NSString *)emojiString withVariantMask:(NSInteger)variantMask;
 + (void)addEmoji:(NSMutableArray <UIKeyboardEmoji *> *)emojiArray emojiString:(NSString *)emojiString;
 
+#endif
+
 + (void)resetEmojiPreferences;
+
+#if !__LP64__
++ (CGGlyph)emojiGlyphShift:(CGGlyph)glyph;
+#endif
+
+#endif
 
 @end
 
