@@ -54,8 +54,6 @@
 + (NSArray <NSString *> *)MultiPersonFamilySkinToneEmoji;
 + (NSArray <NSString *> *)ExtendedCoupleMultiSkinToneEmoji;
 
-+ (NSArray <NSString *> *)PS_OtherMultiplePersonEmoji;
-
 @end
 
 @interface PSEmojiUtilities (Functions)

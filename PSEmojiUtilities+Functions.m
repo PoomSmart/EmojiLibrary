@@ -91,12 +91,7 @@
 }
 
 + (BOOL)isBaseHandshakeOrHandshakeWithSkintonesEmoji:(NSString *)emojiString {
-    // TODO: WHAT IS THIS, Apple?
-    // if ([emojiString rangeOfString:emojiString options:NSLiteralSearch].location)
-    //     return containsString(emojiString, LEFTHAND) && containsString(emojiString, RIGHTHAND);
-    // return YES;
-    return [emojiString isEqualToString:HANDSHAKE]
-        || (containsString(emojiString, HANDSHAKE) && emojiString.length == 2)
+    return containsString(emojiString, HANDSHAKE)
         || (containsString(emojiString, LEFTHAND) && containsString(emojiString, RIGHTHAND));
 }
 
@@ -104,7 +99,6 @@
     return [self isHandholingCoupleEmoji:emojiString] || [self isCoupleMultiSkinToneEmoji:emojiString] || containsString(emojiString, @"‍❤️‍");
 }
 
-// FIXME: Likely deprecated
 + (NSArray <NSArray <NSString *> *> *)coupleSkinToneChooserVariantsForString:(NSString *)emojiString {
     PSEmojiMultiSkinType multiSkinType = [self multiPersonTypeForString:emojiString];
     if (multiSkinType) {
@@ -177,7 +171,7 @@
 }
 
 + (NSString *)joiningStringForCoupleString:(NSString *)emojiString {
-    if (containsString(emojiString, HANDSHAKE_JOINER) || [[self CoupleMultiSkinToneEmoji] containsObject:emojiString])
+    if (containsString(emojiString, HANDSHAKE_JOINER))
         return HANDSHAKE_JOINER;
     if (containsString(emojiString, HEART_KISS_JOINER) || containsString(emojiString, @"💏"))
         return HEART_KISS_JOINER;
@@ -189,9 +183,8 @@
 }
 
 + (NSArray <NSString *> *)skinToneSpecifiersForString:(NSString *)emojiString {
-    // FIXME: WHAT, Apple?
-    // if ([self isCoupleMultiSkinToneEmoji:emojiString] && ![self isBaseHandshakeOrHandshakeWithSkintonesEmoji:emojiString])
-    //     return @[@"EMFSkinToneSpecifierTypeFitzpatrickNone"];
+    if ([self isCoupleMultiSkinToneEmoji:emojiString] && ![self isBaseHandshakeOrHandshakeWithSkintonesEmoji:emojiString])
+        return @[@"EMFSkinToneSpecifierTypeFitzpatrickNone"];
     NSString *baseFirst = [self emojiBaseFirstCharacterString:emojiString];
     if ([baseFirst isEqualToString:FM] || [baseFirst isEqualToString:FF] || [baseFirst isEqualToString:MM]) {
         int skinTone = [self skinToneForString:emojiString];
@@ -728,7 +721,7 @@
 }
 
 + (BOOL)hasSkinToneVariants:(NSString *)emojiString {
-    if ([self isMultiPersonFamilySkinToneEmoji:emojiString] || [[self PS_OtherMultiplePersonEmoji] containsObject:emojiString])
+    if ([self isMultiPersonFamilySkinToneEmoji:emojiString])
         return NO;
     NSString *baseFirst = [self emojiBaseFirstCharacterString:emojiString];
     return [self isSkinToneEmoji:baseFirst] || [self isCoupleMultiSkinToneEmoji:baseFirst];

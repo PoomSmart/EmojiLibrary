@@ -470,15 +470,4 @@
     return data;
 }
 
-+ (NSArray <NSString *> *)PS_OtherMultiplePersonEmoji {
-    static dispatch_once_t onceToken;
-    static NSArray <NSString *> *data;
-    dispatch_once(&onceToken, ^{
-        data = [self AsFakeSet:@[
-            @"🧑‍🧑‍🧒", @"🧑‍🧑‍🧒‍🧒", @"🧑‍🧒", @"🧑‍🧒‍🧒"
-        ]];
-    });
-    return data;
-}
-
 @end
