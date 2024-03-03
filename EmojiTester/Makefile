@@ -1,4 +1,3 @@
-# IOKit header must be removed from Theos
 TARGET = macosx
 
 include $(THEOS)/makefiles/common.mk
