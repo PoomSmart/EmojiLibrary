@@ -14,7 +14,7 @@ then
 	exit 1
 fi
 
-FOLDER=Font-15
+FOLDER=EmojiFont
 
 if [[ -z $2 ]]
 then

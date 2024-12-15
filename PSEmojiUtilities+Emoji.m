@@ -407,7 +407,7 @@
     return data;
 }
 
-+ (NSArray <NSString *> *)PrepolulatedEmoji {
++ (NSArray <NSString *> *)PrepopulatedEmoji {
     static dispatch_once_t onceToken;
     static NSArray <NSString *> *data;
     dispatch_once(&onceToken, ^{
@@ -418,10 +418,6 @@
         ]];
     });
     return data;
-}
-
-+ (NSArray <NSString *> *)PrepopulatedEmoji {
-    return [self PrepolulatedEmoji];
 }
 
 + (NSArray <NSString *> *)ProfessionWithoutSkinToneEmoji {

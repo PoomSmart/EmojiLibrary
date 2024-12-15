@@ -47,7 +47,6 @@
 + (NSArray <NSString *> *)GenderEmoji;
 + (NSArray <NSString *> *)NoneVariantEmoji;
 + (NSArray <NSString *> *)ProfessionEmoji;
-+ (NSArray <NSString *> *)PrepolulatedEmoji;
 + (NSArray <NSString *> *)PrepopulatedEmoji;
 + (NSArray <NSString *> *)ProfessionWithoutSkinToneEmoji;
 + (NSArray <NSString *> *)CoupleMultiSkinToneEmoji;
@@ -93,7 +92,7 @@
 + (BOOL)isDingbatVariantsEmoji:(NSString *)emojiString;
 + (BOOL)isCoupleMultiSkinToneEmoji:(NSString *)emojiString;
 + (BOOL)isComposedCoupleMultiSkinToneEmoji:(NSString *)emojiString;
-+ (BOOL)isHandholingCoupleEmoji:(NSString *)emojiString;
++ (BOOL)isHandholdingCoupleEmoji:(NSString *)emojiString;
 + (BOOL)isBaseHandshakeOrHandshakeWithSkintonesEmoji:(NSString *)emojiString;
 + (BOOL)isMultiPersonFamilySkinToneEmoji:(NSString *)emojiString;
 + (BOOL)supportsCoupleSkinToneSelection:(NSString *)emojiString;

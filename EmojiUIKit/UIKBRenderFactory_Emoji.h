@@ -1,3 +1,4 @@
+@class UIKBRenderGeometry;
 #import <UIKit/UIKBRenderFactory.h>
 #import <UIKit/UIKBRenderTraits.h>
 #import <UIKit/UIKBGradient.h>

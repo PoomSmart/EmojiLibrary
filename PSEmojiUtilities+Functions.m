@@ -85,7 +85,7 @@
     return containsString(emojiString, HANDSHAKE_JOINER) || containsString(emojiString, HEART_JOINER);
 }
 
-+ (BOOL)isHandholingCoupleEmoji:(NSString *)emojiString {
++ (BOOL)isHandholdingCoupleEmoji:(NSString *)emojiString {
     return [[self CoupleMultiSkinToneEmoji] containsObject:[NSString stringWithUnichar:[self firstLongCharacter:emojiString]]]
         || containsString(emojiString, HANDSHAKE_JOINER);
 }
@@ -96,7 +96,7 @@
 }
 
 + (BOOL)supportsCoupleSkinToneSelection:(NSString *)emojiString {
-    return [self isHandholingCoupleEmoji:emojiString] || [self isCoupleMultiSkinToneEmoji:emojiString] || containsString(emojiString, @"‍❤️‍");
+    return [self isHandholdingCoupleEmoji:emojiString] || [self isCoupleMultiSkinToneEmoji:emojiString] || containsString(emojiString, @"‍❤️‍");
 }
 
 + (NSArray <NSArray <NSString *> *> *)coupleSkinToneChooserVariantsForString:(NSString *)emojiString {
@@ -492,7 +492,7 @@
     NSInteger multiSkinType = [self multiPersonTypeForString:emojiString];
     if (multiSkinType) {
         NSString *joiner = [self joiningStringForCoupleString:emojiString];
-        if (joiner == nil || [self isHandholingCoupleEmoji:emojiString] || [self isBaseHandshakeOrHandshakeWithSkintonesEmoji:emojiString]) {
+        if (joiner == nil || [self isHandholdingCoupleEmoji:emojiString] || [self isBaseHandshakeOrHandshakeWithSkintonesEmoji:emojiString]) {
             switch (multiSkinType) {
                 case PSEmojiMultiSkinTypeFM:
                     return FM;
@@ -645,7 +645,7 @@
     if (multiSkinType) {
         if (multiSkinType == PSEmojiMultiSkinTypeHandshake)
             return [self skinToneVariantsForMultiPersonType:PSEmojiMultiSkinTypeHandshake];
-        if ([self isHandholingCoupleEmoji:emojiString])
+        if ([self isHandholdingCoupleEmoji:emojiString])
             return [self skinToneVariantsForMultiPersonType:multiSkinType];
         NSString *joiner = [self joiningStringForCoupleString:emojiString] ?: HANDSHAKE_JOINER;
         return [self skinToneVariantsForCouple:multiSkinType joiner:joiner];
@@ -758,22 +758,22 @@
     UIKeyboardEmojiCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"kEmojiCellIdentifier" forIndexPath:indexPath];
     if (indexPath.section == 0) {
         NSArray <UIKeyboardEmoji *> *recents = collectionView.inputController.recents;
-        NSArray <UIKeyboardEmoji *> *prepolulatedEmojis = [self prepopulatedCategory].emoji;
-        NSUInteger prepolulatedCount = [(UIKeyboardEmojiGraphicsTraits *)[inputView valueForKey:@"_emojiGraphicsTraits"] prepolulatedRecentCount];
-        NSRange range = NSMakeRange(0, prepolulatedCount);
+        NSArray <UIKeyboardEmoji *> *prepopulatedEmojis = [self prepopulatedCategory].emoji;
+        NSUInteger prepopulatedCount = [(UIKeyboardEmojiGraphicsTraits *)[inputView valueForKey:@"_emojiGraphicsTraits"] prepolulatedRecentCount];
+        NSRange range = NSMakeRange(0, prepopulatedCount);
         if (recents.count) {
             NSUInteger idx = 0;
             NSMutableArray <UIKeyboardEmoji *> *array = [NSMutableArray arrayWithArray:recents];
-            if (array.count < prepolulatedCount) {
-                while (idx < prepolulatedEmojis.count && prepolulatedCount != array.count) {
-                    UIKeyboardEmoji *emoji = prepolulatedEmojis[idx++];
+            if (array.count < prepopulatedCount) {
+                while (idx < prepopulatedEmojis.count && prepopulatedCount != array.count) {
+                    UIKeyboardEmoji *emoji = prepopulatedEmojis[idx++];
                     if (![array containsObject:emoji])
                         [array addObject:emoji];
                 }
             }
             cell.emoji = [array subarrayWithRange:range][indexPath.item];
         } else
-            cell.emoji = [prepolulatedEmojis subarrayWithRange:range][indexPath.item];
+            cell.emoji = [prepopulatedEmojis subarrayWithRange:range][indexPath.item];
     } else {
         NSInteger section = indexPath.section;
         if (IS_IOS_OR_NEWER(iOS_9_1))

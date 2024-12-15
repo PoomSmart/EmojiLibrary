@@ -1,4 +1,4 @@
-#import <UIKit/UIKBTree.h>
+@class UIKBTree;
 #import <UIKit/UIKBKeyView.h>
 
 @interface UIKBKeyView (KBResize)
