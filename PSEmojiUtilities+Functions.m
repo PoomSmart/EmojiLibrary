@@ -877,11 +877,11 @@
 
 + (CGGlyph)emojiGlyphShift:(CGGlyph)glyph {
     if (glyph >= 5 && glyph <= 16) // 0 - 9
-        return glyph + 73;
+        return glyph + 109;
     if (glyph == 4) // #
-        return  glyph + 72;
+        return  glyph + 108;
     if (glyph == 44) // *
-        return glyph + 33;
+        return glyph + 69;
     return glyph;
 }
 

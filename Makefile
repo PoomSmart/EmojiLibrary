@@ -1,11 +1,11 @@
-PACKAGE_VERSION = 1.6.1
+PACKAGE_VERSION = 1.6.2
 
 ifeq ($(SIMULATOR),1)
     TARGET = simulator:clang:latest:8.0
-    ARCHS = x86_64 i386
+    ARCHS = arm64 x86_64 i386
 else
     ifeq ($(THEOS_PACKAGE_SCHEME),rootless)
-        TARGET = iphone:clang:latest:14.0
+        TARGET = iphone:clang:latest:15.0
         ARCHS = arm64 arm64e
     else
 		export PREFIX = $(THEOS)/toolchain/Xcode11.xctoolchain/usr/bin/
