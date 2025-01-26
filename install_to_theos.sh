@@ -3,9 +3,11 @@
 set -e
 
 mkdir -p $THEOS/lib/iphone/rootless
+mkdir -p $THEOS/lib/iphone/roothide
 
 cp libEmojiLibrary.tbd $THEOS/lib/
 cp libEmojiLibrary.tbd $THEOS/lib/iphone/rootless/
+cp libEmojiLibrary.tbd $THEOS/lib/iphone/roothide/
 
 mkdir -p $THEOS/include/EmojiLibrary
 
