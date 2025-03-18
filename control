@@ -1,6 +1,6 @@
 Package: com.ps.emojilibrary
 Name: EmojiLibrary
-Version: 1.0.0
+Version: 1.7.0
 Architecture: iphoneos-arm
 Description: Master library for PoomSmart's emoji tweaks.
 Maintainer: PoomSmart
