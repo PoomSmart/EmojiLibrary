@@ -1,6 +1,6 @@
 ifeq ($(SIMULATOR),1)
-    TARGET = simulator:clang:latest:8.0
-    ARCHS = arm64 x86_64 i386
+	TARGET = simulator:clang:latest:8.0
+	ARCHS = arm64 x86_64
 else
 	ifeq ($(THEOS_PACKAGE_SCHEME),rootless)
 		TARGET = iphone:clang:latest:15.0
@@ -23,6 +23,6 @@ include $(THEOS_MAKE_PATH)/library.mk
 ifeq ($(SIMULATOR),1)
 include ../../Simulator/preferenceloader-sim/locatesim.mk
 setup:: clean all
-    @sudo rm -f $(PL_SIMULATOR_ROOT)/usr/lib/$(LIBRARY_NAME).dylib
-    @sudo cp -v $(THEOS_OBJ_DIR)/$(LIBRARY_NAME).dylib $(PL_SIMULATOR_ROOT)/usr/lib/
+	@sudo rm -f $(PL_SIMULATOR_ROOT)/usr/lib/$(LIBRARY_NAME).dylib
+	@sudo cp -v $(THEOS_OBJ_DIR)/$(LIBRARY_NAME).dylib "$(PL_SIMULATOR_ROOT)/usr/lib/"
 endif
