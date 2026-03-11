@@ -1,3 +1,4 @@
+#import <Foundation/Foundation.h>
 #import <TargetConditionals.h>
 #if TARGET_OS_IPHONE
 #import <TextInput/NSString+TIExtras.h>
