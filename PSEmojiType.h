@@ -17,5 +17,11 @@ typedef NS_ENUM(NSInteger, PSEmojiMultiSkinType) {
     PSEmojiMultiSkinTypeFF = 2,
     PSEmojiMultiSkinTypeMM = 3,
     PSEmojiMultiSkinTypeNN = 4,
-    PSEmojiMultiSkinTypeHandshake = 5
+    PSEmojiMultiSkinTypeHandshake = 5,
+    PSEmojiMultiSkinTypeRabbitFF = 6,
+    PSEmojiMultiSkinTypeRabbitMM = 7,
+    PSEmojiMultiSkinTypeRabbitNN = 8,
+    PSEmojiMultiSkinTypeWrestlingFF = 9,
+    PSEmojiMultiSkinTypeWrestlingMM = 10,
+    PSEmojiMultiSkinTypeWrestlingNN = 11
 };

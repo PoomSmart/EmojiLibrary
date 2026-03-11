@@ -1,4 +1,4 @@
-#import <CoreGraphics/CoreGraphics.h>
+#import <CoreGraphics/CGBase.h>
 #import "Header.h"
 #import "PSEmojiType.h"
 
@@ -11,12 +11,16 @@
 #define ZWJ2640FE0F @"‍♀️"
 #define ZWJ2642FE0F @"‍♂️"
 #define ZWJ27A1FE0F @"‍➡️"
-#define HANDSHAKE @"🤝"
-#define HANDSHAKE_JOINER @"‍🤝‍"
-#define LEFTHAND @"🫱"
-#define RIGHTHAND @"🫲"
-#define HEART_JOINER @"‍❤️‍"
-#define HEART_KISS_JOINER @"‍❤️‍💋‍"
+#define HANDSHAKE @"\U0001F91D"
+#define HANDSHAKE_JOINER @"\u200D\U0001F91D\u200D"
+#define LEFTHAND @"\U0001FAF1"
+#define RIGHTHAND @"\U0001FAF2"
+#define HEART_JOINER @"\u200D\u2764\uFE0F\u200D"
+#define HEART_KISS_JOINER @"\u200D\u2764\uFE0F\u200D\U0001F48B\u200D"
+#define RABBIT @"\U0001F430"
+#define RABBIT_JOINER @"\u200D\U0001F430\u200D"
+#define WRESTLING @"\U0001F93C"
+#define FLIGHT_CLOUD_JOINER @"\u200D\U0001FAEF\u200D"
 #define WOMAN @"👩"
 #define MAN @"👨"
 #define NEUTRAL @"🧑"

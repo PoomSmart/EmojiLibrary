@@ -64,12 +64,59 @@ void testMultiPerson(NSString *emoji) {
     prettyPrint(variants, YES, 7);
 }
 
+void readMultiSkinEmojis() {
+    static int modifiers[] = { 1, 3, 4, 5, 6, -1, 0 }; // -1 None, 0 silhouette
+    NSMutableArray *emojis = [NSMutableArray array];
+    [emojis addObjectsFromArray:[PSEmojiUtilities PeopleEmoji]];
+    [emojis addObjectsFromArray:[PSEmojiUtilities ActivityEmoji]];
+    
+    BOOL first = YES;
+    for (NSString *emoji in emojis) {
+        if ([PSEmojiUtilities isCoupleMultiSkinToneEmoji:emoji] || [PSEmojiUtilities isComposedCoupleMultiSkinToneEmoji:emoji]) {
+            if (!first) {
+                printf("\n");
+            }
+            first = NO;
+            NSMutableArray *variants = [NSMutableArray array];
+            for (int i = 0; i < 7; ++i) {
+                NSString *specifier1 = modifiers[i] == 0 ? @"EMFSkinToneSpecifierTypeFitzpatrickSilhouette" : [PSEmojiUtilities skinToneSpecifierTypeFromEmojiFitzpatrickModifier:modifiers[i]];
+                for (int j = 0; j < 7; ++j) {
+                    NSString *specifier2 = modifiers[j] == 0 ? @"EMFSkinToneSpecifierTypeFitzpatrickSilhouette" : [PSEmojiUtilities skinToneSpecifierTypeFromEmojiFitzpatrickModifier:modifiers[j]];
+                    NSString *skinned = [PSEmojiUtilities multiPersonStringForString:emoji skinToneVariantSpecifier:@[specifier1, specifier2]];
+                    if (!skinned) skinned = @"(null)";
+                    [variants addObject:skinned];
+                }
+            }
+            printf("Base %s (Type: %ld)\n", [emoji UTF8String], (long)[PSEmojiUtilities multiPersonTypeForString:emoji]);
+            printf("Total: %lu\n", (unsigned long)variants.count);
+            int x = 1;
+            NSMutableString *string = [NSMutableString string];
+            for (NSString *substring in variants) {
+                [string appendString:@"@\""];
+                [string appendString:substring];
+                [string appendString:@"\","];
+                if (x++ % 7 == 0) {
+                    printf("%s\n", [string UTF8String]);
+                    string.string = @"";
+                }
+                else
+                    [string appendString:@" "];
+            }
+            if (string.length) printf("%s\n", [string UTF8String]);
+        }
+    }
+}
+
 int main(int argc, char *argv[], char *envp[]) {
     if (argc != 2) {
-        printf("Usage: EmojiTester [c|u]\n");
+        printf("Usage: EmojiTester [c|u|m]\n");
         return EXIT_FAILURE;
     }
     const char *opt = argv[1];
+    if (strcmp(opt, "m") == 0) {
+        readMultiSkinEmojis();
+        return 0;
+    }
     bool out = strcmp(opt, "u") == 0;
     if (!out && strcmp(opt, "c")) {
         printf("Don't\n");
