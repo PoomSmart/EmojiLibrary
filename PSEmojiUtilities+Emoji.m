@@ -444,7 +444,7 @@
     static NSArray <NSString *> *data;
     dispatch_once(&onceToken, ^{
         data = [self AsFakeSet:@[
-            @"👭", @"👬", @"👫", @"🧑‍🤝‍🧑", @"👯", @"👯‍♀️", @"👯‍♂️", @"🤼", @"🤼‍♀️", @"🤼‍♂️"
+            @"👭", @"👬", @"👫", @"🧑‍🤝‍🧑",
         ]];
     });
     return data;
@@ -470,6 +470,24 @@
             @"👩‍👩‍👧", @"👨‍👩‍👦", @"👨‍👨‍👦‍👦", @"👨‍👧", @"👨‍👧‍👧", @"🧑‍🧑‍🧒", @"🧑‍🧑‍🧒‍🧒", @"👨‍👨‍👧", @"🧑‍🤝‍🧑", @"👨‍👩‍👦‍👦",
             @"👩‍👩‍👦‍👦", @"👨‍👩‍👧", @"👨‍👦", @"👩‍👧", @"🧑‍🧒‍🧒", @"👩‍👦‍👦", @"👩‍👦", @"👨‍👨‍👧‍👧", @"👨‍👨‍👧‍👦", @"👩‍👧‍👦",
         ]];
+    });
+    return data;
+}
+
++ (NSArray <NSString *> *)BunnyEarsMultiSkinToneEmoji {
+    static dispatch_once_t onceToken;
+    static NSArray <NSString *> *data;
+    dispatch_once(&onceToken, ^{
+        data = [self AsFakeSet:@[@"👯‍♀️", @"👯", @"👯‍♂️"]];
+    });
+    return data;
+}
+
++ (NSArray <NSString *> *)WrestlingMultiSkinToneEmoji {
+    static dispatch_once_t onceToken;
+    static NSArray <NSString *> *data;
+    dispatch_once(&onceToken, ^{
+        data = [self AsFakeSet:@[@"🤼‍♀️", @"🤼", @"🤼‍♂️"]];
     });
     return data;
 }

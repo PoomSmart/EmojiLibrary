@@ -1,3 +1,4 @@
+#import <Foundation/NSArray.h>
 #import <unicode/utf16.h>
 
 @interface EMFStringUtilities : NSObject

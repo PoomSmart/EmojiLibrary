@@ -56,6 +56,8 @@
 + (NSArray <NSString *> *)CoupleMultiSkinToneEmoji;
 + (NSArray <NSString *> *)MultiPersonFamilySkinToneEmoji;
 + (NSArray <NSString *> *)ExtendedCoupleMultiSkinToneEmoji;
++ (NSArray <NSString *> *)BunnyEarsMultiSkinToneEmoji;
++ (NSArray <NSString *> *)WrestlingMultiSkinToneEmoji;
 
 @end
 
@@ -100,6 +102,8 @@
 + (BOOL)isBaseHandshakeOrHandshakeWithSkintonesEmoji:(NSString *)emojiString;
 + (BOOL)isMultiPersonFamilySkinToneEmoji:(NSString *)emojiString;
 + (BOOL)supportsCoupleSkinToneSelection:(NSString *)emojiString;
++ (BOOL)isBunnyEarsEmoji:(NSString *)emojiString;
++ (BOOL)isWrestlingEmoji:(NSString *)emojiString;
 
 + (PSEmojiMultiSkinType)multiPersonTypeForString:(NSString *)emojiString;
 + (NSUInteger)hasVariantsForEmoji:(NSString *)emojiString;

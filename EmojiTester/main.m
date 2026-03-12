@@ -70,13 +70,9 @@ void readMultiSkinEmojis() {
     [emojis addObjectsFromArray:[PSEmojiUtilities PeopleEmoji]];
     [emojis addObjectsFromArray:[PSEmojiUtilities ActivityEmoji]];
     
-    BOOL first = YES;
+    NSMutableString *string = [NSMutableString string];
     for (NSString *emoji in emojis) {
         if ([PSEmojiUtilities isCoupleMultiSkinToneEmoji:emoji] || [PSEmojiUtilities isComposedCoupleMultiSkinToneEmoji:emoji]) {
-            if (!first) {
-                printf("\n");
-            }
-            first = NO;
             NSMutableArray *variants = [NSMutableArray array];
             for (int i = 0; i < 7; ++i) {
                 NSString *specifier1 = modifiers[i] == 0 ? @"EMFSkinToneSpecifierTypeFitzpatrickSilhouette" : [PSEmojiUtilities skinToneSpecifierTypeFromEmojiFitzpatrickModifier:modifiers[i]];
@@ -87,24 +83,18 @@ void readMultiSkinEmojis() {
                     [variants addObject:skinned];
                 }
             }
-            printf("Base %s (Type: %ld)\n", [emoji UTF8String], (long)[PSEmojiUtilities multiPersonTypeForString:emoji]);
-            printf("Total: %lu\n", (unsigned long)variants.count);
-            int x = 1;
-            NSMutableString *string = [NSMutableString string];
-            for (NSString *substring in variants) {
-                [string appendString:@"@\""];
-                [string appendString:substring];
-                [string appendString:@"\","];
-                if (x++ % 7 == 0) {
-                    printf("%s\n", [string UTF8String]);
-                    string.string = @"";
-                }
-                else
-                    [string appendString:@" "];
-            }
-            if (string.length) printf("%s\n", [string UTF8String]);
+            [string appendFormat:@"Base %@ (Type: %ld)\n", emoji, (long)[PSEmojiUtilities multiPersonTypeForString:emoji]];
+            [string appendString:[variants componentsJoinedByString:@" "]];
+            [string appendString:@"\n"];
+            NSArray *chooserVariants = [PSEmojiUtilities skinToneChooserVariantsForString:emoji];
+            [string appendFormat:@"Chooser:\n"];
+            [string appendString:[chooserVariants[0] componentsJoinedByString:@" "]];
+            [string appendString:@"\n"];
+            [string appendString:[chooserVariants[1] componentsJoinedByString:@" "]];
+            [string appendString:@"\n\n"];
         }
     }
+    printf("%s", [string UTF8String]);
 }
 
 int main(int argc, char *argv[], char *envp[]) {
