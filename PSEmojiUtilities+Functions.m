@@ -13,8 +13,8 @@
 @end
 
 #endif
-#include "Header.h"
-#include "PSEmojiType.h"
+#import "Header.h"
+#import "PSEmojiType.h"
 #import "PSEmojiUtilities.h"
 #import "PSEmojiCategory.h"
 
@@ -166,49 +166,58 @@
 + (PSEmojiMultiSkinType)multiPersonTypeForString:(NSString *)emojiString {
     if ([self isBaseHandshakeOrHandshakeWithSkintonesEmoji:emojiString])
         return PSEmojiMultiSkinTypeHandshake;
+
+    if ([self isBunnyEarsEmoji:emojiString]) {
+        if ([emojiString isEqualToString:@"👯‍♀️"]) return PSEmojiMultiSkinTypeRabbitFF;
+        if ([emojiString isEqualToString:@"👯‍♂️"]) return PSEmojiMultiSkinTypeRabbitMM;
+        NSArray *tokens = [self tokenizedMultiPersonFromString:emojiString];
+        if (tokens.count >= 2) {
+            NSString *baseLeft = [self emojiBaseFirstCharacterString:tokens[0]];
+            NSString *baseRight = [self emojiBaseFirstCharacterString:tokens[1]];
+            if ([baseLeft isEqualToString:WOMAN] && [baseRight isEqualToString:WOMAN])
+                return PSEmojiMultiSkinTypeRabbitFF;
+            if ([baseLeft isEqualToString:MAN] && [baseRight isEqualToString:MAN])
+                return PSEmojiMultiSkinTypeRabbitMM;
+        }
+        return PSEmojiMultiSkinTypeRabbitNN;
+    }
+
+    if ([self isWrestlingEmoji:emojiString]) {
+        if ([emojiString isEqualToString:@"🤼‍♀️"]) return PSEmojiMultiSkinTypeWrestlingFF;
+        if ([emojiString isEqualToString:@"🤼‍♂️"]) return PSEmojiMultiSkinTypeWrestlingMM;
+        NSArray *tokens = [self tokenizedMultiPersonFromString:emojiString];
+        if (tokens.count >= 2) {
+            NSString *baseLeft = [self emojiBaseFirstCharacterString:tokens[0]];
+            NSString *baseRight = [self emojiBaseFirstCharacterString:tokens[1]];
+            if ([baseLeft isEqualToString:WOMAN] && [baseRight isEqualToString:WOMAN])
+                return PSEmojiMultiSkinTypeWrestlingFF;
+            if ([baseLeft isEqualToString:MAN] && [baseRight isEqualToString:MAN])
+                return PSEmojiMultiSkinTypeWrestlingMM;
+        }
+        return PSEmojiMultiSkinTypeWrestlingNN;
+    }
+
     NSString *baseFirst = [self emojiBaseFirstCharacterString:emojiString];
     if ([self isCoupleMultiSkinToneEmoji:baseFirst]) {
-        if ([baseFirst isEqualToString:FM])
-            return PSEmojiMultiSkinTypeFM;
-        if ([baseFirst isEqualToString:FF])
-            return PSEmojiMultiSkinTypeFF;
-        if ([baseFirst isEqualToString:MM])
-            return PSEmojiMultiSkinTypeMM;
-        if ([baseFirst isEqualToString:NN] || [baseFirst isEqualToString:@"💑"] || [baseFirst isEqualToString:@"💏"])
-            return PSEmojiMultiSkinTypeNN;
-        if ([self isBunnyEarsEmoji:baseFirst]) {
-            if (containsString(emojiString, FEMALE)) return PSEmojiMultiSkinTypeRabbitFF;
-            if (containsString(emojiString, MALE)) return PSEmojiMultiSkinTypeRabbitMM;
-            return PSEmojiMultiSkinTypeRabbitNN;
-        }
-        if ([self isWrestlingEmoji:baseFirst]) {
-            if (containsString(emojiString, FEMALE)) return PSEmojiMultiSkinTypeWrestlingFF;
-            if (containsString(emojiString, MALE)) return PSEmojiMultiSkinTypeWrestlingMM;
-            return PSEmojiMultiSkinTypeWrestlingNN;
-        }
-    } else if (emojiString && ([self isComposedCoupleMultiSkinToneEmoji:emojiString] || [self supportsCoupleSkinToneSelection:emojiString])) {
+        if ([baseFirst isEqualToString:@"👫"]) return PSEmojiMultiSkinTypeFM;
+        if ([baseFirst isEqualToString:@"👭"]) return PSEmojiMultiSkinTypeFF;
+        if ([baseFirst isEqualToString:@"👬"]) return PSEmojiMultiSkinTypeMM;
+        return PSEmojiMultiSkinTypeNN;
+    }
+
+    if (emojiString && ([self isComposedCoupleMultiSkinToneEmoji:emojiString] || [self supportsCoupleSkinToneSelection:emojiString])) {
         NSArray *tokens = [self tokenizedMultiPersonFromString:emojiString];
-        NSString *baseLeft = [self emojiBaseFirstCharacterString:tokens[0]];
-        NSString *baseRight = [self emojiBaseFirstCharacterString:tokens[1]];
-        if ([baseLeft isEqualToString:WOMAN]) {
-            if ([baseRight isEqualToString:WOMAN]) {
-                if ([self isBunnyEarsEmoji:emojiString]) return PSEmojiMultiSkinTypeRabbitFF;
-                if ([self isWrestlingEmoji:emojiString]) return PSEmojiMultiSkinTypeWrestlingFF;
-                return PSEmojiMultiSkinTypeFF;
+        if (tokens.count >= 2) {
+            NSString *baseLeft = [self emojiBaseFirstCharacterString:tokens[0]];
+            NSString *baseRight = [self emojiBaseFirstCharacterString:tokens[1]];
+            if ([baseLeft isEqualToString:WOMAN]) {
+                if ([baseRight isEqualToString:WOMAN]) return PSEmojiMultiSkinTypeFF;
+                if ([baseRight isEqualToString:MAN]) return PSEmojiMultiSkinTypeFM;
+            } else if ([baseLeft isEqualToString:MAN]) {
+                if ([baseRight isEqualToString:MAN]) return PSEmojiMultiSkinTypeMM;
             }
-            if ([baseRight isEqualToString:MAN])
-                return PSEmojiMultiSkinTypeFM;
         }
-        if ([baseLeft isEqualToString:MAN] && [baseRight isEqualToString:MAN]) {
-            if ([self isBunnyEarsEmoji:emojiString]) return PSEmojiMultiSkinTypeRabbitMM;
-            if ([self isWrestlingEmoji:emojiString]) return PSEmojiMultiSkinTypeWrestlingMM;
-            return PSEmojiMultiSkinTypeMM;
-        }
-        if ([baseLeft isEqualToString:NEUTRAL] && [baseRight isEqualToString:NEUTRAL]) {
-            if ([self isBunnyEarsEmoji:emojiString]) return PSEmojiMultiSkinTypeRabbitNN;
-            if ([self isWrestlingEmoji:emojiString]) return PSEmojiMultiSkinTypeWrestlingNN;
-            return PSEmojiMultiSkinTypeNN;
-        }
+        return PSEmojiMultiSkinTypeNN;
     }
     return 0;
 }
@@ -314,131 +323,111 @@
 
 + (NSString *)multiPersonStringForString:(NSString *)emojiString skinToneVariantSpecifier:(NSArray <NSString *> *)specifier {
     PSEmojiMultiSkinType multiSkinType = [self multiPersonTypeForString:emojiString];
-    if (multiSkinType) {
-        NSString *joiner = [self joiningStringForCoupleString:emojiString];
-        BOOL hasSilhouette = [specifier containsObject:@"EMFSkinToneSpecifierTypeFitzpatrickSilhouette"];
-        if (hasSilhouette) {
-            NSString *first = [specifier firstObject];
-            NSString *last = [specifier lastObject];
-            BOOL firstSil = [first isEqualToString:@"EMFSkinToneSpecifierTypeFitzpatrickSilhouette"];
-            BOOL lastSil = [last isEqualToString:@"EMFSkinToneSpecifierTypeFitzpatrickSilhouette"];
-            if (firstSil) {
-                if (lastSil) {
-                    BOOL isHeart = joiner && containsString(joiner, @"\u2764");
-                    BOOL isHandshake = joiner && [joiner isEqualToString:HANDSHAKE_JOINER];
-                    if (!isHeart && !isHandshake)
-                        specifier = @[@"EMFSkinToneSpecifierTypeFitzpatrick6", @"EMFSkinToneSpecifierTypeFitzpatrick6"];
-                } else
-                    specifier = @[last, last];
-            } else
-                specifier = @[first, first];
-        }
-        NSString *solo = nil;
-        NSString *firstSuffix = nil;
-        NSString *lastSuffix = nil;
+    if (!multiSkinType) return nil;
+
+    NSString *joiner = [self joiningStringForCoupleString:emojiString];
+    BOOL containsSilhouette = [specifier containsObject:@"EMFSkinToneSpecifierTypeFitzpatrickSilhouette"];
+    
+    if (containsSilhouette) {
         NSString *first = [specifier firstObject];
-        firstSuffix = [self skinToneSuffixFromSpecifierType:first];
-        if (specifier.count == 2) {
+        if (![first isEqualToString:@"EMFSkinToneSpecifierTypeFitzpatrickSilhouette"]) {
+            specifier = @[first, first];
+        } else {
             NSString *last = [specifier lastObject];
-            lastSuffix = [self skinToneSuffixFromSpecifierType:last];
-        } else
-            lastSuffix = firstSuffix;
-        if (joiner && firstSuffix.length == 0 &&
-            containsString(joiner, @"\u2764") &&
-            multiSkinType != PSEmojiMultiSkinTypeNN) {
-            return [self emojiBaseString:emojiString];
-        }
-        if (joiner && ![joiner isEqualToString:HANDSHAKE_JOINER] && 
-            multiSkinType != PSEmojiMultiSkinTypeHandshake &&
-            multiSkinType < PSEmojiMultiSkinTypeRabbitFF) {
-            if (multiSkinType == PSEmojiMultiSkinTypeNN || firstSuffix.length || lastSuffix.length) {
-                NSArray *tokens = [self tokenizedMultiPersonFromString:emojiString];
-                if (tokens.count <= 1) {
-                    if (multiSkinType == PSEmojiMultiSkinTypeFM)
-                        tokens = @[WOMAN, MAN];
-                    else {
-                        NSString *soloBase = NEUTRAL;
-                        if (multiSkinType == PSEmojiMultiSkinTypeFF || multiSkinType == PSEmojiMultiSkinTypeRabbitFF || multiSkinType == PSEmojiMultiSkinTypeWrestlingFF)
-                            soloBase = WOMAN;
-                        else if (multiSkinType == PSEmojiMultiSkinTypeMM || multiSkinType == PSEmojiMultiSkinTypeRabbitMM || multiSkinType == PSEmojiMultiSkinTypeWrestlingMM)
-                            soloBase = MAN;
-                        tokens = @[soloBase, soloBase];
-                    }
+            if (![last isEqualToString:@"EMFSkinToneSpecifierTypeFitzpatrickSilhouette"]) {
+                specifier = @[last, last];
+            // } else if (!joiner) {
+            } else {
+                BOOL isHeart = joiner && containsString(joiner, @"\u2764");
+                BOOL isHandshake = joiner && [joiner isEqualToString:HANDSHAKE_JOINER];
+                if (!isHeart && !isHandshake) {
+                    specifier = @[@"EMFSkinToneSpecifierTypeFitzpatrick6", @"EMFSkinToneSpecifierTypeFitzpatrick6"];
                 }
-                NSString *firstToken = [self emojiBaseString:[tokens firstObject]];
-                NSString *lastToken = [self emojiBaseString:[tokens lastObject]];
-                return [self coupleStringWithLeftPerson:firstToken leftVariant:firstSuffix joiningString:joiner rightPerson:lastToken rightVariant:lastSuffix];
-            }
-            return [self emojiBaseString:emojiString];
-        }
-        switch (multiSkinType) {
-            case PSEmojiMultiSkinTypeMM: {
-                if (firstSuffix == nil || lastSuffix == nil)
-                    return MM;
-                if ([firstSuffix isEqualToString:lastSuffix] && !hasSilhouette)
-                    return [NSString stringWithFormat:@"%@%@", MM, firstSuffix];
-                solo = MAN;
-                break;
-            }
-            case PSEmojiMultiSkinTypeFF: {
-                if (firstSuffix == nil || lastSuffix == nil)
-                    return FF;
-                if ([firstSuffix isEqualToString:lastSuffix] && !hasSilhouette)
-                    return [NSString stringWithFormat:@"%@%@", FF, firstSuffix];
-                solo = WOMAN;
-                break;
-            }
-            case PSEmojiMultiSkinTypeFM: {
-                if (firstSuffix == nil || lastSuffix == nil)
-                    return FM;
-                if (![firstSuffix isEqualToString:lastSuffix] || hasSilhouette)
-                    return [NSString stringWithFormat:@"%@%@%@%@%@", WOMAN, firstSuffix, HANDSHAKE_JOINER, MAN, lastSuffix];
-                return [NSString stringWithFormat:@"%@%@", FM, firstSuffix];
-            }
-            case PSEmojiMultiSkinTypeNN:
-                solo = NEUTRAL;
-                break;
-            case PSEmojiMultiSkinTypeHandshake: {
-                if (firstSuffix == nil || lastSuffix == nil)
-                    return HANDSHAKE;
-                if (![firstSuffix isEqualToString:lastSuffix] || hasSilhouette)
-                    return [NSString stringWithFormat:@"%@%@%@%@%@", LEFTHAND, firstSuffix, ZWJ, RIGHTHAND, lastSuffix];
-                return [NSString stringWithFormat:@"%@%@", HANDSHAKE, firstSuffix];
-            }
-            case PSEmojiMultiSkinTypeRabbitFF:
-            case PSEmojiMultiSkinTypeRabbitMM:
-            case PSEmojiMultiSkinTypeRabbitNN: {
-                if (firstSuffix == nil || lastSuffix == nil) {
-                    if (multiSkinType == PSEmojiMultiSkinTypeRabbitFF) return @"👯‍♀️";
-                    if (multiSkinType == PSEmojiMultiSkinTypeRabbitMM) return @"👯‍♂️";
-                    return @"👯";
-                }
-                if ([firstSuffix isEqualToString:lastSuffix] && !hasSilhouette) {
-                    if (multiSkinType == PSEmojiMultiSkinTypeRabbitFF) return [NSString stringWithFormat:@"👯%@%@", firstSuffix, ZWJ2640FE0F];
-                    if (multiSkinType == PSEmojiMultiSkinTypeRabbitMM) return [NSString stringWithFormat:@"👯%@%@", firstSuffix, ZWJ2642FE0F];
-                    return [NSString stringWithFormat:@"👯%@", firstSuffix];
-                }
-                solo = multiSkinType == PSEmojiMultiSkinTypeRabbitFF ? WOMAN : (multiSkinType == PSEmojiMultiSkinTypeRabbitMM ? MAN : NEUTRAL);
-                return [NSString stringWithFormat:@"%@%@%@%@%@", solo, firstSuffix, RABBIT_JOINER, solo, lastSuffix];
-            }
-            case PSEmojiMultiSkinTypeWrestlingFF:
-            case PSEmojiMultiSkinTypeWrestlingMM:
-            case PSEmojiMultiSkinTypeWrestlingNN: {
-                if (firstSuffix == nil || lastSuffix == nil) {
-                    if (multiSkinType == PSEmojiMultiSkinTypeWrestlingFF) return @"🤼‍♀️";
-                    if (multiSkinType == PSEmojiMultiSkinTypeWrestlingMM) return @"🤼‍♂️";
-                    return @"🤼";
-                }
-                if ([firstSuffix isEqualToString:lastSuffix] && !hasSilhouette) {
-                    if (multiSkinType == PSEmojiMultiSkinTypeWrestlingFF) return [NSString stringWithFormat:@"🤼%@%@", firstSuffix, ZWJ2640FE0F];
-                    if (multiSkinType == PSEmojiMultiSkinTypeWrestlingMM) return [NSString stringWithFormat:@"🤼%@%@", firstSuffix, ZWJ2642FE0F];
-                    return [NSString stringWithFormat:@"🤼%@", firstSuffix];
-                }
-                solo = multiSkinType == PSEmojiMultiSkinTypeWrestlingFF ? WOMAN : (multiSkinType == PSEmojiMultiSkinTypeWrestlingMM ? MAN : NEUTRAL);
-                return [NSString stringWithFormat:@"%@%@%@%@%@", solo, firstSuffix, FLIGHT_CLOUD_JOINER, solo, lastSuffix];
             }
         }
-        return [NSString stringWithFormat:@"%@%@%@%@%@", solo, firstSuffix, HANDSHAKE_JOINER, solo, lastSuffix];
+    }
+
+    NSString *suffix1 = [self skinToneSuffixFromSpecifierType:specifier.firstObject];
+    NSString *suffix2 = suffix1;
+    if (specifier.count == 2) {
+        suffix2 = [self skinToneSuffixFromSpecifierType:specifier.lastObject];
+    }
+
+    // Heart-couple with no skin tone: return base
+    if (joiner && suffix1.length == 0 &&
+        containsString(joiner, @"\u2764") &&
+        multiSkinType != PSEmojiMultiSkinTypeNN) {
+        return [self emojiBaseString:emojiString];
+    }
+
+    // Non-handshake joiner, not Handshake type, not Rabbit/Wrestling: tokenize couple
+    if (joiner && ![joiner isEqualToString:HANDSHAKE_JOINER] &&
+        multiSkinType != PSEmojiMultiSkinTypeHandshake &&
+        multiSkinType < PSEmojiMultiSkinTypeRabbitFF) {
+        if (multiSkinType == PSEmojiMultiSkinTypeNN || suffix1.length || suffix2.length) {
+            NSArray *tokens = [self tokenizedMultiPersonFromString:emojiString];
+            if (tokens.count <= 1) {
+                if (multiSkinType == PSEmojiMultiSkinTypeFM)
+                    tokens = @[WOMAN, MAN];
+                else {
+                    NSString *soloBase = NEUTRAL;
+                    if (multiSkinType == PSEmojiMultiSkinTypeFF)
+                        soloBase = WOMAN;
+                    else if (multiSkinType == PSEmojiMultiSkinTypeMM)
+                        soloBase = MAN;
+                    tokens = @[soloBase, soloBase];
+                }
+            }
+            NSString *firstToken = [self emojiBaseString:[tokens firstObject]];
+            NSString *lastToken = [self emojiBaseString:[tokens lastObject]];
+            return [self coupleStringWithLeftPerson:firstToken leftVariant:suffix1 joiningString:joiner rightPerson:lastToken rightVariant:suffix2];
+        }
+        return [self emojiBaseString:emojiString];
+    }
+
+    switch (multiSkinType) {
+        case PSEmojiMultiSkinTypeFM:
+            if (suffix1 && suffix2) {
+                if (containsSilhouette || ![suffix1 isEqualToString:suffix2])
+                    return [NSString stringWithFormat:@"%@%@%@%@%@", WOMAN, suffix1, HANDSHAKE_JOINER, MAN, suffix2];
+                return [NSString stringWithFormat:@"%@%@", FM, suffix1];
+            }
+            break;
+        case PSEmojiMultiSkinTypeFF:
+            if (suffix1 && suffix2) {
+                if (containsSilhouette || ![suffix1 isEqualToString:suffix2])
+                    return [NSString stringWithFormat:@"%@%@%@%@%@", WOMAN, suffix1, HANDSHAKE_JOINER, WOMAN, suffix2];
+                return [NSString stringWithFormat:@"%@%@", FF, suffix1];
+            }
+            break;
+        case PSEmojiMultiSkinTypeMM:
+            if (suffix1 && suffix2) {
+                if (containsSilhouette || ![suffix1 isEqualToString:suffix2])
+                    return [NSString stringWithFormat:@"%@%@%@%@%@", MAN, suffix1, HANDSHAKE_JOINER, MAN, suffix2];
+                return [NSString stringWithFormat:@"%@%@", MM, suffix1];
+            }
+            break;
+        case PSEmojiMultiSkinTypeHandshake:
+            if (suffix1 && suffix2) {
+                if (containsSilhouette || ![suffix1 isEqualToString:suffix2])
+                    return [NSString stringWithFormat:@"%@%@%@%@%@", LEFTHAND, suffix1, ZWJ, RIGHTHAND, suffix2];
+                return [NSString stringWithFormat:@"%@%@", HANDSHAKE, suffix1];
+            }
+            break;
+        case PSEmojiMultiSkinTypeRabbitFF:
+            return [self _generateMultiPersonEmojiWithSkinTones:@"👯" personBase:WOMAN joiner:RABBIT_JOINER genderSuffix:ZWJ2640FE0F suffix1:suffix1 suffix2:suffix2 containsSilhouette:containsSilhouette];
+        case PSEmojiMultiSkinTypeRabbitMM:
+            return [self _generateMultiPersonEmojiWithSkinTones:@"👯" personBase:MAN joiner:RABBIT_JOINER genderSuffix:ZWJ2642FE0F suffix1:suffix1 suffix2:suffix2 containsSilhouette:containsSilhouette];
+        case PSEmojiMultiSkinTypeRabbitNN:
+            return [self _generateMultiPersonEmojiWithSkinTones:@"👯" personBase:NEUTRAL joiner:RABBIT_JOINER genderSuffix:nil suffix1:suffix1 suffix2:suffix2 containsSilhouette:containsSilhouette];
+        case PSEmojiMultiSkinTypeWrestlingFF:
+            return [self _generateMultiPersonEmojiWithSkinTones:@"🤼" personBase:WOMAN joiner:FLIGHT_CLOUD_JOINER genderSuffix:ZWJ2640FE0F suffix1:suffix1 suffix2:suffix2 containsSilhouette:containsSilhouette];
+        case PSEmojiMultiSkinTypeWrestlingMM:
+            return [self _generateMultiPersonEmojiWithSkinTones:@"🤼" personBase:MAN joiner:FLIGHT_CLOUD_JOINER genderSuffix:ZWJ2642FE0F suffix1:suffix1 suffix2:suffix2 containsSilhouette:containsSilhouette];
+        case PSEmojiMultiSkinTypeWrestlingNN:
+            return [self _generateMultiPersonEmojiWithSkinTones:@"🤼" personBase:NEUTRAL joiner:FLIGHT_CLOUD_JOINER genderSuffix:nil suffix1:suffix1 suffix2:suffix2 containsSilhouette:containsSilhouette];
+        default:
+            break;
     }
     return nil;
 }
@@ -505,68 +494,47 @@
 }
 
 + (NSArray <NSArray <NSString *> *> *)skinToneChooserVariantsForHandHoldingCoupleType:(PSEmojiMultiSkinType)coupleType {
-    NSMutableArray *first = [NSMutableArray arrayWithCapacity:5];
-    NSMutableArray *second = [NSMutableArray arrayWithCapacity:5];
-    for (NSString *skin in [PSEmojiUtilities skinModifiers]) {
-        switch (coupleType) {
-            case PSEmojiMultiSkinTypeFM: {
-                [first addObject:[NSString stringWithFormat:@"%@%@%@%@", WOMAN, skin, HANDSHAKE_JOINER, MAN]];
-                [second addObject:[NSString stringWithFormat:@"%@%@%@%@", WOMAN, HANDSHAKE_JOINER, MAN, skin]];
-                break;
+    NSArray *skinToneVariants = [self skinModifiers];
+    NSMutableArray *first = [NSMutableArray arrayWithCapacity:skinToneVariants.count];
+    NSMutableArray *second = [NSMutableArray arrayWithCapacity:skinToneVariants.count];
+
+    switch (coupleType) {
+        case PSEmojiMultiSkinTypeFM:
+            for (NSString *skin in skinToneVariants) {
+                [first addObject:[NSString stringWithFormat:@"%@%@%@%@%@", WOMAN, skin, @"‍🤝‍", MAN, ZWJ]];
+                [second addObject:[NSString stringWithFormat:@"%@%@%@%@%@", WOMAN, ZWJ, @"‍🤝‍", MAN, skin]];
             }
-            case PSEmojiMultiSkinTypeFF: {
-                [first addObject:[NSString stringWithFormat:@"%@%@%@%@", WOMAN, skin, HANDSHAKE_JOINER, WOMAN]];
-                [second addObject:[NSString stringWithFormat:@"%@%@%@%@", WOMAN, HANDSHAKE_JOINER, WOMAN, skin]];
-                break;
+            break;
+        case PSEmojiMultiSkinTypeFF:
+            for (NSString *skin in skinToneVariants) {
+                [first addObject:[NSString stringWithFormat:@"%@%@%@%@%@", WOMAN, skin, @"‍🤝‍", WOMAN, ZWJ]];
+                [second addObject:[NSString stringWithFormat:@"%@%@%@%@%@", WOMAN, ZWJ, @"‍🤝‍", WOMAN, skin]];
             }
-            case PSEmojiMultiSkinTypeMM: {
-                [first addObject:[NSString stringWithFormat:@"%@%@%@%@", MAN, skin, HANDSHAKE_JOINER, MAN]];
-                [second addObject:[NSString stringWithFormat:@"%@%@%@%@", MAN, HANDSHAKE_JOINER, MAN, skin]];
-                break;
+            break;
+        case PSEmojiMultiSkinTypeMM:
+            for (NSString *skin in skinToneVariants) {
+                [first addObject:[NSString stringWithFormat:@"%@%@%@%@%@", MAN, skin, @"‍🤝‍", MAN, ZWJ]];
+                [second addObject:[NSString stringWithFormat:@"%@%@%@%@%@", MAN, ZWJ, @"‍🤝‍", MAN, skin]];
             }
-            case PSEmojiMultiSkinTypeNN: {
-                [first addObject:[NSString stringWithFormat:@"%@%@%@%@", NEUTRAL, skin, HANDSHAKE_JOINER, NEUTRAL]];
-                [second addObject:[NSString stringWithFormat:@"%@%@%@%@", NEUTRAL, HANDSHAKE_JOINER, NEUTRAL, skin]];
-                break;
+            break;
+        case PSEmojiMultiSkinTypeNN:
+            return [self skinToneChooserArraysForCoupleType:PSEmojiMultiSkinTypeNN joiner:@"‍🤝‍"];
+        case PSEmojiMultiSkinTypeHandshake:
+            for (NSString *skin in skinToneVariants) {
+                [first addObject:[NSString stringWithFormat:@"%@%@%@%@%@", @"🫱", skin, ZWJ, @"🫲", ZWJ]];
+                [second addObject:[NSString stringWithFormat:@"%@%@%@%@%@", @"🫱", ZWJ, @"🫲", skin, ZWJ]];
             }
-            case PSEmojiMultiSkinTypeHandshake: {
-                [first addObject:[NSString stringWithFormat:@"%@%@%@%@%@", LEFTHAND, skin, ZWJ, RIGHTHAND, ZWJ]];
-                [second addObject:[NSString stringWithFormat:@"%@%@%@%@%@", LEFTHAND, ZWJ, RIGHTHAND, skin, ZWJ]];
-                break;
-            }
-            case PSEmojiMultiSkinTypeRabbitFF: {
-                [first addObject:[NSString stringWithFormat:@"%@%@%@%@%@", WOMAN, skin, RABBIT_JOINER, WOMAN, skin]];
-                [second addObject:[NSString stringWithFormat:@"%@%@%@%@%@", WOMAN, skin, RABBIT_JOINER, WOMAN, skin]];
-                break;
-            }
-            case PSEmojiMultiSkinTypeRabbitMM: {
-                [first addObject:[NSString stringWithFormat:@"%@%@%@%@%@", MAN, skin, RABBIT_JOINER, MAN, skin]];
-                [second addObject:[NSString stringWithFormat:@"%@%@%@%@%@", MAN, skin, RABBIT_JOINER, MAN, skin]];
-                break;
-            }
-            case PSEmojiMultiSkinTypeRabbitNN: {
-                [first addObject:[NSString stringWithFormat:@"%@%@%@%@%@", NEUTRAL, skin, RABBIT_JOINER, NEUTRAL, skin]];
-                [second addObject:[NSString stringWithFormat:@"%@%@%@%@%@", NEUTRAL, skin, RABBIT_JOINER, NEUTRAL, skin]];
-                break;
-            }
-            case PSEmojiMultiSkinTypeWrestlingFF: {
-                [first addObject:[NSString stringWithFormat:@"%@%@%@%@%@", WOMAN, skin, FLIGHT_CLOUD_JOINER, WOMAN, skin]];
-                [second addObject:[NSString stringWithFormat:@"%@%@%@%@%@", WOMAN, skin, FLIGHT_CLOUD_JOINER, WOMAN, skin]];
-                break;
-            }
-            case PSEmojiMultiSkinTypeWrestlingMM: {
-                [first addObject:[NSString stringWithFormat:@"%@%@%@%@%@", MAN, skin, FLIGHT_CLOUD_JOINER, MAN, skin]];
-                [second addObject:[NSString stringWithFormat:@"%@%@%@%@%@", MAN, skin, FLIGHT_CLOUD_JOINER, MAN, skin]];
-                break;
-            }
-            case PSEmojiMultiSkinTypeWrestlingNN: {
-                [first addObject:[NSString stringWithFormat:@"%@%@%@%@%@", NEUTRAL, skin, FLIGHT_CLOUD_JOINER, NEUTRAL, skin]];
-                [second addObject:[NSString stringWithFormat:@"%@%@%@%@%@", NEUTRAL, skin, FLIGHT_CLOUD_JOINER, NEUTRAL, skin]];
-                break;
-            }
-            default:
-                break;
-        }
+            break;
+        case PSEmojiMultiSkinTypeRabbitFF:
+        case PSEmojiMultiSkinTypeRabbitMM:
+        case PSEmojiMultiSkinTypeRabbitNN:
+            return [self _skinToneChooserVariantsForMultiPersonEmoji:coupleType skinToneVariants:skinToneVariants joiner:RABBIT_JOINER];
+        case PSEmojiMultiSkinTypeWrestlingFF:
+        case PSEmojiMultiSkinTypeWrestlingMM:
+        case PSEmojiMultiSkinTypeWrestlingNN:
+            return [self _skinToneChooserVariantsForMultiPersonEmoji:coupleType skinToneVariants:skinToneVariants joiner:FLIGHT_CLOUD_JOINER];
+        default:
+            break;
     }
     return @[first, second];
 }
@@ -587,6 +555,35 @@
     if (multiSkinType)
         return [self skinToneChooserVariantsForString:emojiString usesSilhouetteSpecifiers:YES];
     return nil;
+}
+
++ (NSString *)_generateMultiPersonEmojiWithSkinTones:(NSString *)emoji personBase:(NSString *)personBase joiner:(NSString *)joiner genderSuffix:(NSString *)genderSuffix suffix1:(NSString *)suffix1 suffix2:(NSString *)suffix2 containsSilhouette:(BOOL)containsSilhouette {
+    if (containsSilhouette || ![suffix1 isEqualToString:suffix2]) {
+        return [NSString stringWithFormat:@"%@%@%@%@%@", personBase, suffix1, joiner, personBase, suffix2];
+    }
+    if (genderSuffix) {
+        return [NSString stringWithFormat:@"%@%@%@", emoji, suffix1, genderSuffix];
+    }
+    return [NSString stringWithFormat:@"%@%@", emoji, suffix1];
+}
+
++ (NSArray <NSArray <NSString *> *> *)_skinToneChooserVariantsForMultiPersonEmoji:(PSEmojiMultiSkinType)multiSkinType skinToneVariants:(NSArray <NSString *> *)skinToneVariants joiner:(NSString *)joiner {
+    NSString *person = nil;
+    if (multiSkinType == PSEmojiMultiSkinTypeRabbitFF || multiSkinType == PSEmojiMultiSkinTypeWrestlingFF)
+        person = WOMAN;
+    else if (multiSkinType == PSEmojiMultiSkinTypeRabbitMM || multiSkinType == PSEmojiMultiSkinTypeWrestlingMM)
+        person = MAN;
+    else
+        person = NEUTRAL;
+    
+    NSMutableArray *first = [NSMutableArray arrayWithCapacity:skinToneVariants.count];
+    NSMutableArray *second = [NSMutableArray arrayWithCapacity:skinToneVariants.count];
+    for (NSString *skin in skinToneVariants) {
+        NSString *variant = [NSString stringWithFormat:@"%@%@%@%@%@", person, skin, joiner, person, skin];
+        [first addObject:variant];
+        [second addObject:variant];
+    }
+    return @[first, second];
 }
 
 + (BOOL)hasSkin:(NSString *)emojiString {

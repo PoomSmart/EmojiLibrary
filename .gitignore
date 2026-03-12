@@ -3,4 +3,5 @@ obj
 packages/*
 .DS_Store
 Font-*
+impl*.mm
 EmojiTester/bin
