@@ -49,6 +49,22 @@ void printWithCodepoints(NSString *title, NSString *emoji) {
     NSLog(@"%@: %@ %@", title, emoji, toUTF32(emoji));
 }
 
+NSString *toHexCodepoints(NSString *string) {
+    NSMutableArray *utf32 = [NSMutableArray array];
+    for (int i = 0; i < string.length; i++) {
+        UChar32 cbase = [string characterAtIndex:i];
+        if ((cbase & 0xFC00) == 0xD800 && i + 1 < string.length) {
+            UChar32 y = [string characterAtIndex:i + 1];
+            if ((y & 0xFC00) == 0xDC00) {
+                cbase = (cbase << 10) + y - 0x35FDC00;
+                i++;
+            }
+        }
+        [utf32 addObject:[NSString stringWithFormat:@"U+%04X", cbase]];
+    }
+    return [utf32 componentsJoinedByString:@" "];
+}
+
 void testMultiPerson(NSString *emoji) {
     static int modifiers[] = { 1, 3, 4, 5, 6, -1, 0 }; // -1 None, 0 silhouette
     NSMutableArray *variants = [NSMutableArray array];
@@ -84,14 +100,19 @@ void readMultiSkinEmojis() {
                 }
             }
             [string appendFormat:@"Base %@ (Type: %ld)\n", emoji, (long)[PSEmojiUtilities multiPersonTypeForString:emoji]];
-            [string appendString:[variants componentsJoinedByString:@" "]];
-            [string appendString:@"\n"];
+            for (NSString *variant in variants) {
+                [string appendFormat:@"%@ (%@)\n", variant, toHexCodepoints(variant)];
+            }
             NSArray *chooserVariants = [PSEmojiUtilities skinToneChooserVariantsForString:emoji];
             [string appendFormat:@"Chooser:\n"];
-            [string appendString:[chooserVariants[0] componentsJoinedByString:@" "]];
+            for (NSString *variant in chooserVariants[0]) {
+                [string appendFormat:@"%@ (%@)\n", variant, toHexCodepoints(variant)];
+            }
             [string appendString:@"\n"];
-            [string appendString:[chooserVariants[1] componentsJoinedByString:@" "]];
-            [string appendString:@"\n\n"];
+            for (NSString *variant in chooserVariants[1]) {
+                [string appendFormat:@"%@ (%@)\n", variant, toHexCodepoints(variant)];
+            }
+            [string appendString:@"\n"];
         }
     }
     printf("%s", [string UTF8String]);
