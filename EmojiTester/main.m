@@ -134,7 +134,7 @@ void readMultiSkinEmojis() {
             for (NSString *variant in variants) {
                 [string appendFormat:@"%@ (%@)\n", variant, toHexCodepoints(variant)];
             }
-            NSArray *chooserVariants = [PSEmojiUtilities skinToneChooserVariantsForString:emoji];
+            NSArray *chooserVariants = [PSEmojiUtilities coupleSkinToneChooserVariantsForString:emoji];
             [string appendFormat:@"Chooser:\n"];
             for (NSString *variant in chooserVariants[0]) {
                 [string appendFormat:@"%@ (%@)\n", variant, toHexCodepoints(variant)];

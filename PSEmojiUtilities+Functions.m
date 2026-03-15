@@ -490,14 +490,7 @@
     }
     for (NSString *skin in [PSEmojiUtilities skinModifiers]) {
         NSString *emoji;
-        if (coupleType >= PSEmojiMultiSkinTypeRabbitFF && coupleType <= PSEmojiMultiSkinTypeWrestlingNN) {
-            if (coupleType == PSEmojiMultiSkinTypeRabbitFF) emoji = [NSString stringWithFormat:@"👯%@%@", skin, ZWJ2640FE0F];
-            else if (coupleType == PSEmojiMultiSkinTypeRabbitMM) emoji = [NSString stringWithFormat:@"👯%@%@", skin, ZWJ2642FE0F];
-            else if (coupleType == PSEmojiMultiSkinTypeRabbitNN) emoji = [NSString stringWithFormat:@"👯%@", skin];
-            else if (coupleType == PSEmojiMultiSkinTypeWrestlingFF) emoji = [NSString stringWithFormat:@"🤼%@%@", skin, ZWJ2640FE0F];
-            else if (coupleType == PSEmojiMultiSkinTypeWrestlingMM) emoji = [NSString stringWithFormat:@"🤼%@%@", skin, ZWJ2642FE0F];
-            else emoji = [NSString stringWithFormat:@"🤼%@", skin];
-        } else if (joiner)
+        if (joiner)
             emoji = [self coupleStringWithLeftPerson:leftEmoji leftVariant:skin joiningString:joiner rightPerson:rightEmoji rightVariant:skin];
         else
             emoji = [NSString stringWithFormat:@"%@%@", pair, skin];
