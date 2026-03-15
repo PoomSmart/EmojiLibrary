@@ -80,6 +80,37 @@ void testMultiPerson(NSString *emoji) {
     prettyPrint(variants, YES, 7);
 }
 
+void testMultiPersonString(NSString *emoji, NSString *s1, NSString *s2) {
+    NSString *skinned = [PSEmojiUtilities multiPersonStringForString:emoji skinToneVariantSpecifier:@[s1, s2]];
+    printf("Test: %s [%s, %s] -> %s (%s)\n", [emoji UTF8String], [s1 UTF8String], [s2 UTF8String], [skinned UTF8String], [toHexCodepoints(skinned) UTF8String]);
+}
+
+void runExplicitMultiPersonTests() {
+    printf("Explicit multiPersonStringForString Tests:\n");
+    NSArray *specifiers = @[
+        @"EMFSkinToneSpecifierTypeFitzpatrickNone",
+        @"EMFSkinToneSpecifierTypeFitzpatrick1_2",
+        @"EMFSkinToneSpecifierTypeFitzpatrick3",
+        @"EMFSkinToneSpecifierTypeFitzpatrick4",
+        @"EMFSkinToneSpecifierTypeFitzpatrick5",
+        @"EMFSkinToneSpecifierTypeFitzpatrick6",
+        @"EMFSkinToneSpecifierTypeFitzpatrickSilhouette"
+    ];
+    
+    NSArray *testEmojis = @[
+        @"🤝", @"👯", @"👯‍♀️", @"👯‍♂️", @"🤼", @"🤼‍♀️", @"🤼‍♂️", @"👫", @"👩‍❤️‍👨", @"🧑‍🤝‍🧑"
+    ];
+    
+    for (NSString *emoji in testEmojis) {
+        printf("Testing %s\n", [emoji UTF8String]);
+        for (NSString *s1 in specifiers) {
+            for (NSString *s2 in specifiers) {
+                testMultiPersonString(emoji, s1, s2);
+            }
+        }
+    }
+}
+
 void readMultiSkinEmojis() {
     static int modifiers[] = { 1, 3, 4, 5, 6, -1, 0 }; // -1 None, 0 silhouette
     NSMutableArray *emojis = [NSMutableArray array];
@@ -125,6 +156,7 @@ int main(int argc, char *argv[], char *envp[]) {
     }
     const char *opt = argv[1];
     if (strcmp(opt, "m") == 0) {
+        runExplicitMultiPersonTests();
         readMultiSkinEmojis();
         return 0;
     }

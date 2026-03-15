@@ -17,4 +17,5 @@
 - (NSUInteger)_silhouetteFromCurrentSelections; // iOS 14.5+
 - (void)_updatePreviewWellForCurrentSelection;
 - (void)_configureFamilyMemberWellStackViews;
+- (void)_configureSkinToneVariantSpecifiersForBaseString:(NSString *)baseString;
 @end
