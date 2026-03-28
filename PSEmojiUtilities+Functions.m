@@ -1117,11 +1117,11 @@
 
 + (CGGlyph)emojiGlyphShift:(CGGlyph)glyph {
     if (glyph >= 5 && glyph <= 16) // 0 - 9
-        return glyph + 109;
+        return glyph + 133;
     if (glyph == 4) // #
-        return  glyph + 108;
+        return  glyph + 132;
     if (glyph == 44) // *
-        return glyph + 69;
+        return glyph + 93;
     return glyph;
 }
 
